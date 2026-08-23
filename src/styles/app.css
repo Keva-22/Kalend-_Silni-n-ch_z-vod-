@@ -1,0 +1,667 @@
+/* ── Základ ──────────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--body);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--akcent);
+  outline-offset: -2px;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--akcent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.obal {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 0 60px;
+}
+
+/* ── Barvy profilů a uzavírek ────────────────────────────── */
+
+.profil--rovina { color: var(--profil-rovina); }
+.profil--zvlnena { color: var(--profil-zvlnena); }
+.profil--kopcovita { color: var(--profil-kopcovita); }
+.profil--horska { color: var(--profil-horska); }
+
+.pruh--rovina { background: var(--profil-rovina); }
+.pruh--zvlnena { background: var(--profil-zvlnena); }
+.pruh--kopcovita { background: var(--profil-kopcovita); }
+.pruh--horska { background: var(--profil-horska); }
+
+.okraj--rovina { border-left-color: var(--profil-rovina); }
+.okraj--zvlnena { border-left-color: var(--profil-zvlnena); }
+.okraj--kopcovita { border-left-color: var(--profil-kopcovita); }
+.okraj--horska { border-left-color: var(--profil-horska); }
+
+.uzavirky--plna { color: var(--uzavirky-plna); }
+.uzavirky--castecna { color: var(--uzavirky-castecna); }
+.uzavirky--provoz { color: var(--uzavirky-provoz); }
+.uzavirky--nezname { color: var(--uzavirky-nezname); }
+
+/* ── Hlavička ────────────────────────────────────────────── */
+
+.hlavicka {
+  padding: var(--mezera-6) var(--mezera-4) 22px;
+  border-bottom: 1px solid var(--linka);
+}
+
+.hlavicka-znacka {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--akcent);
+  margin-bottom: 10px;
+}
+
+.hlavicka h1 {
+  font-family: var(--display);
+  font-size: 42px;
+  line-height: 0.95;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.hlavicka h1 .tlumene {
+  color: var(--tlum);
+}
+
+.hlavicka p {
+  font-size: 13.5px;
+  color: var(--tlum);
+  margin: var(--mezera-3) 0 0;
+  max-width: 440px;
+  line-height: 1.55;
+}
+
+/* ── Ovládání (filtry) ───────────────────────────────────── */
+
+.ovladani {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mezera-2);
+  align-items: center;
+  padding: var(--mezera-3) var(--mezera-4);
+  border-bottom: 1px solid var(--linka);
+  position: sticky;
+  top: 0;
+  background: var(--ink);
+  z-index: 5;
+}
+
+.ovladani-oddelovac {
+  width: 1px;
+  height: 20px;
+  background: var(--linka);
+  margin: 0 var(--mezera-1);
+}
+
+.ovladani-mezera {
+  flex: 1;
+}
+
+.prepinac {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  background: transparent;
+  color: var(--tlum2);
+  border: 1px solid transparent;
+}
+
+.prepinac.aktivni {
+  background: var(--plocha2);
+  color: var(--text);
+  border-color: var(--linka);
+}
+
+.prepinac-sezona {
+  font-size: 12px;
+  padding: 6px 11px;
+  font-weight: 600;
+  color: var(--tlum);
+  border-color: var(--linka);
+}
+
+.prepinac-sezona.aktivni {
+  background: var(--text);
+  color: var(--ink);
+  border-color: var(--text);
+}
+
+/* ── Měsíční oddělovač ───────────────────────────────────── */
+
+.mesic-hlava {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: var(--mezera-5) var(--mezera-4) 10px;
+}
+
+.mesic-hlava h2 {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin: 0;
+  color: var(--text);
+}
+
+.mesic-hlava .cara {
+  flex: 1;
+  height: 1px;
+  background: var(--linka);
+}
+
+.mesic-hlava .pocet {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tlum2);
+}
+
+/* ── Seznam a řádek závodu ───────────────────────────────── */
+
+.seznam {
+  background: var(--plocha);
+  border-top: 1px solid var(--linka);
+}
+
+.radek {
+  border-bottom: 1px solid var(--linka);
+}
+
+.radek-tlacitko {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+  padding: var(--mezera-3) var(--mezera-4);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  align-items: flex-start;
+  transition: background 0.15s;
+}
+
+.radek-tlacitko.otevrene {
+  background: var(--plocha2);
+}
+
+.radek-datum {
+  width: 44px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.radek-den {
+  font-family: var(--display);
+  font-size: 26px;
+  line-height: 0.9;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.radek-den-tydne {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tlum2);
+  margin-top: 3px;
+}
+
+.radek-tbc {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--tlum2);
+  padding-top: 6px;
+}
+
+.radek-stred {
+  flex: 1;
+  min-width: 0;
+}
+
+.radek-titulek {
+  display: flex;
+  gap: var(--mezera-2);
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.radek-nazev {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.odznak {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--tlum);
+  border: 1px solid var(--tlum-pruhledna);
+}
+
+.odznak--uzavreno {
+  color: var(--akcent);
+  border-color: var(--akcent-pruhledna);
+}
+
+.radek-misto {
+  font-size: 12.5px;
+  color: var(--tlum);
+  margin-top: var(--mezera-1);
+}
+
+.radek-misto .serie {
+  color: var(--tlum2);
+}
+
+.radek-profil {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 9px;
+}
+
+.profil-pruh {
+  width: 68px;
+  height: 3px;
+  background: var(--linka);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.profil-pruh > div {
+  height: 100%;
+}
+
+.profil-popisek {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+
+.radek-cisla {
+  text-align: right;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.radek-km {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text);
+}
+
+.radek-hm {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--tlum);
+  margin-top: 3px;
+}
+
+.radek-nedoplneno {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--tlum2);
+}
+
+.radek-sipka {
+  font-size: 11px;
+  color: var(--tlum2);
+  margin-top: 6px;
+}
+
+/* ── Detail závodu ───────────────────────────────────────── */
+
+.detail {
+  padding: 18px var(--mezera-4) 22px;
+  background: var(--ink);
+  border-top: 1px solid var(--linka);
+}
+
+.detail table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.detail th {
+  text-align: right;
+  padding: 0 0 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tlum2);
+  border-bottom: 1px solid var(--linka);
+}
+
+.detail th:first-child {
+  text-align: left;
+}
+
+.detail td {
+  padding: var(--mezera-2) 0;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.detail td:first-child {
+  text-align: left;
+  font-family: var(--body);
+}
+
+.detail td.hm {
+  color: var(--tlum);
+}
+
+.detail td.profil-bunka {
+  font-size: 11px;
+}
+
+.detail .nedoplneno {
+  color: var(--tlum2);
+}
+
+.detail-bez-tras {
+  font-size: 13px;
+  color: var(--tlum2);
+  margin: 0 0 16px;
+  font-style: italic;
+}
+
+.detail-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mezera-4);
+  margin-bottom: 18px;
+}
+
+.detail-blok {
+  min-width: 170px;
+}
+
+.detail-blok.roztazny {
+  flex: 1;
+}
+
+.detail-popisek {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tlum2);
+  margin-bottom: 5px;
+}
+
+.detail-hodnota {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.detail-hodnota.nedoplneno {
+  color: var(--tlum2);
+}
+
+.detail-pata {
+  display: flex;
+  align-items: center;
+  gap: var(--mezera-3);
+  flex-wrap: wrap;
+}
+
+.detail-web {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--akcent);
+  padding: 9px 15px;
+  border-radius: 3px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.detail-bez-webu {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--tlum2);
+}
+
+.detail-zdroj {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tlum2);
+}
+
+/* ── Mřížkový pohled ─────────────────────────────────────── */
+
+.mrizka-obal {
+  padding: 0 var(--mezera-4);
+}
+
+.mrizka-dny,
+.mrizka {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.mrizka-dny {
+  margin-bottom: 3px;
+}
+
+.mrizka-dny div {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--tlum2);
+  text-align: center;
+  padding: 3px 0;
+  letter-spacing: 0.08em;
+}
+
+.mrizka-den {
+  min-height: 54px;
+  padding: var(--mezera-1);
+  border-radius: 3px;
+  background: var(--plocha);
+  border: 1px solid transparent;
+}
+
+.mrizka-den.se-zavodem {
+  background: var(--plocha2);
+  border-color: var(--linka);
+}
+
+.mrizka-cislo {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tlum2);
+  margin-bottom: 3px;
+}
+
+.mrizka-den.se-zavodem .mrizka-cislo {
+  color: var(--text);
+}
+
+.mrizka-zavod {
+  display: block;
+  width: 100%;
+  margin-bottom: 2px;
+  padding: 2px 3px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--tlum2);
+  cursor: pointer;
+  text-align: left;
+  font-size: 9px;
+  line-height: 1.25;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mrizka-tbc {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tlum2);
+}
+
+/* ── Prázdný stav, legenda, poznámka ─────────────────────── */
+
+.prazdno {
+  padding: 60px var(--mezera-4);
+  text-align: center;
+}
+
+.prazdno p {
+  color: var(--tlum);
+  font-size: 14px;
+  margin: 0;
+}
+
+.legenda {
+  margin: var(--mezera-6) var(--mezera-4) 0;
+  padding: 16px 18px;
+  border: 1px solid var(--linka);
+  border-radius: 4px;
+}
+
+.legenda-titulek {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tlum2);
+  margin-bottom: 11px;
+}
+
+.legenda-polozky {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.legenda-polozka {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legenda-vzorek {
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.legenda-polozka span {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--tlum);
+}
+
+.poznamka {
+  margin: 18px var(--mezera-4) 0;
+  font-size: 11.5px;
+  color: var(--tlum2);
+  line-height: 1.6;
+}
+
+/* ── Úzké displeje (375 px) ──────────────────────────────── */
+
+@media (max-width: 420px) {
+  .hlavicka {
+    padding: var(--mezera-5) var(--mezera-3) 18px;
+  }
+
+  .hlavicka h1 {
+    font-size: 34px;
+  }
+
+  .ovladani {
+    padding: 12px var(--mezera-3);
+    gap: 6px;
+  }
+
+  .mesic-hlava {
+    padding: 22px var(--mezera-3) 8px;
+  }
+
+  .radek-tlacitko {
+    gap: 12px;
+    padding: 12px var(--mezera-3);
+  }
+
+  .radek-datum {
+    width: 36px;
+  }
+
+  .detail {
+    padding: 16px var(--mezera-3) 20px;
+  }
+
+  .detail-blok {
+    min-width: 130px;
+  }
+
+  .mrizka-obal {
+    padding: 0 var(--mezera-3);
+  }
+
+  .legenda {
+    margin: 28px var(--mezera-3) 0;
+  }
+
+  .poznamka {
+    margin: 16px var(--mezera-3) 0;
+  }
+}

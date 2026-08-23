@@ -1,0 +1,42 @@
+/* Designové tokeny převzaté z prototypu RoadbookCalendar.jsx */
+
+:root {
+  /* ── Barvy ─────────────────────────────────────────────── */
+  --ink: #0f1e28;        /* pozadí stránky */
+  --plocha: #162a36;     /* pozadí seznamu */
+  --plocha2: #1c3543;    /* zvýrazněná plocha (otevřený řádek, buňka s závodem) */
+  --linka: #264352;      /* oddělovací linky a rámečky */
+  --text: #e6edeb;       /* hlavní text */
+  --tlum: #7b96a2;       /* tlumený text */
+  --tlum2: #5e7a87;      /* nejtlumenější text, popisky */
+  --akcent: #4fcfa6;     /* akcentová zelená */
+
+  /* poloprůhledné varianty pro rámečky odznaků */
+  --tlum-pruhledna: #7b96a255;
+  --akcent-pruhledna: #4fcfa655;
+
+  /* profily trati (převýšení na kilometr) */
+  --profil-rovina: #4fcfa6;
+  --profil-zvlnena: #e8c766;
+  --profil-kopcovita: #ef9350;
+  --profil-horska: #e8634c;
+
+  /* stavy uzavírek */
+  --uzavirky-plna: #4fcfa6;
+  --uzavirky-castecna: #e8c766;
+  --uzavirky-provoz: #ef9350;
+  --uzavirky-nezname: #5e7a87;
+
+  /* ── Typografie ────────────────────────────────────────── */
+  --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ── Mezery ────────────────────────────────────────────── */
+  --mezera-1: 4px;
+  --mezera-2: 8px;
+  --mezera-3: 14px;
+  --mezera-4: 20px;
+  --mezera-5: 26px;
+  --mezera-6: 34px;
+}
