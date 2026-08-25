@@ -1,31 +1,42 @@
-/* Designové tokeny převzaté z prototypu RoadbookCalendar.jsx */
+/* Designové tokeny — světlé téma.
+   Barvy profilů jsou zvolené tak, aby byly čitelné jako text na bílé
+   (kontrast ≥ 4.5:1) a zároveň fungovaly jako barevný pruh. */
 
 :root {
-  /* ── Barvy ─────────────────────────────────────────────── */
-  --ink: #0f1e28;        /* pozadí stránky */
-  --plocha: #162a36;     /* pozadí seznamu */
-  --plocha2: #1c3543;    /* zvýrazněná plocha (otevřený řádek, buňka s závodem) */
-  --linka: #264352;      /* oddělovací linky a rámečky */
-  --text: #e6edeb;       /* hlavní text */
-  --tlum: #7b96a2;       /* tlumený text */
-  --tlum2: #5e7a87;      /* nejtlumenější text, popisky */
-  --akcent: #4fcfa6;     /* akcentová zelená */
+  /* ── Plochy ────────────────────────────────────────────── */
+  --pozadi: #f5f3ef;          /* pozadí stránky, teplá off-white */
+  --plocha: #ffffff;          /* karty, seznam, buňky kalendáře */
+  --plocha-tlum: #f7f9f8;     /* jemné zvýraznění (hover, detail) */
+  --plocha-akcent: #edf6f2;   /* akcentové zvýraznění (otevřený řádek) */
 
-  /* poloprůhledné varianty pro rámečky odznaků */
-  --tlum-pruhledna: #7b96a255;
-  --akcent-pruhledna: #4fcfa655;
+  --linka: #e5e3dd;           /* hairline linky a rámečky */
+  --linka-vyrazna: #d3d0c8;   /* výraznější oddělení */
 
-  /* profily trati (převýšení na kilometr) */
-  --profil-rovina: #4fcfa6;
-  --profil-zvlnena: #e8c766;
-  --profil-kopcovita: #ef9350;
-  --profil-horska: #e8634c;
+  /* ── Text ──────────────────────────────────────────────── */
+  --text: #12212b;            /* hlavní text */
+  --text-tlum: #4d6673;       /* sekundární text */
+  --text-slaby: #5e7784;      /* popisky, mono štítky */
 
-  /* stavy uzavírek */
-  --uzavirky-plna: #4fcfa6;
-  --uzavirky-castecna: #e8c766;
-  --uzavirky-provoz: #ef9350;
-  --uzavirky-nezname: #5e7a87;
+  /* ── Akcent ────────────────────────────────────────────── */
+  --akcent: #0d7a5e;
+  --akcent-tmavy: #0a5f49;
+  --akcent-plocha: #e4f1ec;
+
+  /* ── Profily trati (převýšení na kilometr) ─────────────── */
+  --profil-rovina: #0f7d55;
+  --profil-zvlnena: #9a6a06;
+  --profil-kopcovita: #bd5418;
+  --profil-horska: #c0322c;
+
+  /* ── Stavy uzavírek ────────────────────────────────────── */
+  --uzavirky-plna: #0f7d55;
+  --uzavirky-castecna: #9a6a06;
+  --uzavirky-provoz: #bd5418;
+  --uzavirky-nezname: #5e7784;
+
+  /* ── Stíny ─────────────────────────────────────────────── */
+  --stin: 0 1px 2px rgba(18, 33, 43, 0.05), 0 1px 3px rgba(18, 33, 43, 0.04);
+  --stin-vyrazny: 0 4px 16px rgba(18, 33, 43, 0.08);
 
   /* ── Typografie ────────────────────────────────────────── */
   --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
@@ -39,4 +50,9 @@
   --mezera-4: 20px;
   --mezera-5: 26px;
   --mezera-6: 34px;
+
+  /* ── Zaoblení ──────────────────────────────────────────── */
+  --radius: 12px;
+  --radius-male: 6px;
+  --radius-pilulka: 999px;
 }

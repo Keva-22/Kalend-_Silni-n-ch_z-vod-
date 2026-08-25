@@ -16,7 +16,10 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
   const datum = zavod.datum ? new Date(zavod.datum + "T12:00:00") : null;
 
   return (
-    <div className="radek" id={`zavod-${zavod.id}`}>
+    <div
+      className={"radek" + (p ? ` radek--${p.profil.klic}` : "")}
+      id={`zavod-${zavod.id}`}
+    >
       <button
         className={"radek-tlacitko" + (otevreno ? " otevrene" : "")}
         onClick={prepni}
