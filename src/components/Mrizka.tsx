@@ -1,5 +1,6 @@
 import type { Zavod } from "../types";
 import { profilZavodu } from "../ui";
+import { useTexty } from "../i18n";
 
 interface Props {
   zavody: Zavod[];
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function Mrizka({ zavody, mesic, naKlik }: Props) {
+  const t = useTexty();
   const [rok, cisloMesice] = mesic.split("-").map(Number);
   // týden začíná pondělkem
   const posun = (new Date(rok, cisloMesice - 1, 1).getDay() + 6) % 7;
@@ -21,7 +23,7 @@ export function Mrizka({ zavody, mesic, naKlik }: Props) {
   return (
     <div className="mrizka-obal">
       <div className="mrizka-dny">
-        {["po", "út", "st", "čt", "pá", "so", "ne"].map((den) => (
+        {t.dnyMrizka.map((den) => (
           <div key={den}>{den}</div>
         ))}
       </div>
@@ -57,7 +59,7 @@ export function Mrizka({ zavody, mesic, naKlik }: Props) {
         })}
       </div>
       {bezTerminu > 0 && (
-        <div className="mrizka-tbc">+ {bezTerminu} bez potvrzeného termínu</div>
+        <div className="mrizka-tbc">{t.bezTerminu(bezTerminu)}</div>
       )}
     </div>
   );

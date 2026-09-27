@@ -1,5 +1,6 @@
 import type { Zavod } from "../types";
-import { DNY, profilZavodu } from "../ui";
+import { profilZavodu } from "../ui";
+import { useTexty } from "../i18n";
 import { Detail } from "./Detail";
 
 /* Převýšení na kilometr, při kterém je profilový pruh vyplněný na 100 %. */
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function Radek({ zavod, otevreno, prepni }: Props) {
+  const t = useTexty();
   const p = profilZavodu(zavod);
   const datum = zavod.datum ? new Date(zavod.datum + "T12:00:00") : null;
 
@@ -29,10 +31,10 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
           {datum ? (
             <>
               <div className="radek-den">{datum.getDate()}</div>
-              <div className="radek-den-tydne">{DNY[datum.getDay()]}</div>
+              <div className="radek-den-tydne">{t.dnyZkratky[datum.getDay()]}</div>
             </>
           ) : (
-            <div className="radek-tbc">TBC</div>
+            <div className="radek-tbc">{t.tbc}</div>
           )}
         </div>
 
@@ -40,8 +42,11 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
           <div className="radek-titulek">
             <span className="radek-nazev">{zavod.nazev}</span>
             <span className="odznak">{zavod.zeme}</span>
+            {zavod.format === "time-trial" && (
+              <span className="odznak odznak--casovka">{t.casovka}</span>
+            )}
             {zavod.uzavirky === "plna" && (
-              <span className="odznak odznak--uzavreno">uzavřeno</span>
+              <span className="odznak odznak--uzavreno">{t.uzavreno}</span>
             )}
           </div>
           <div className="radek-misto">
@@ -57,7 +62,7 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
                 />
               </div>
               <span className={`profil-popisek profil--${p.profil.klic}`}>
-                {p.profil.nazev}
+                {t.profily[p.profil.klic]}
               </span>
             </div>
           )}
@@ -67,10 +72,12 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
           {p ? (
             <>
               <div className="radek-km">{p.trasa.km} km</div>
-              <div className="radek-hm">{p.trasa.hm} hm</div>
+              <div className="radek-hm">
+                {p.trasa.hm} {t.jednotkaHm}
+              </div>
             </>
           ) : (
-            <div className="radek-nedoplneno">nedoplněno</div>
+            <div className="radek-nedoplneno">{t.nedoplneno}</div>
           )}
           <div className="radek-sipka">{otevreno ? "▲" : "▼"}</div>
         </div>

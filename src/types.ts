@@ -1,4 +1,4 @@
-export type Zeme = 'CZ' | 'AT' | 'DE' | 'SK' | 'IT';
+export type Zeme = 'CZ' | 'AT' | 'DE' | 'SK' | 'IT' | 'HR';
 export type Overeno = 'ok' | 'check' | 'tbc';
 export type Uzavirky = 'plna' | 'castecna' | 'provoz' | 'nezname';
 
@@ -11,6 +11,18 @@ export type Uzavirky = 'plna' | 'castecna' | 'provoz' | 'nezname';
 
 export type Profile = 'flat' | 'hilly' | 'mountain';
 export type Status = 'confirmed' | 'provisional' | 'cancelled';
+export type Format = 'mass-start' | 'time-trial';
+
+/** Německé znění textových polí. Vyplňuje se jen tam, kde se liší od
+    originálu — vlastní jména (rakouská místa, názvy závodů) se nepřekládají. */
+export interface PrekladZavodu {
+  nazev?: string;
+  misto?: string;
+  region?: string;
+  startovne?: string;
+  zdroj?: string;
+  trasy?: string[];                 // názvy tras ve stejném pořadí jako trasy[]
+}
 
 export interface StartLocation {
   city: string;
@@ -60,4 +72,7 @@ export interface Zavod {
   status?: Status;
   lastVerified?: string;            // 'YYYY-MM-DD', kdy byl záznam naposledy ověřen
   sourceUrl?: string;               // URL zdroje, ze kterého údaje pocházejí
+  format?: Format;                  // undefined = hromadný start
+
+  de?: PrekladZavodu;               // německé znění pro přepínač jazyka
 }

@@ -46,11 +46,12 @@ export interface KontrolaZavodu {
   chyby: string[];
 }
 
-const ZEME = ["CZ", "AT", "DE", "SK", "IT"];
+const ZEME = ["CZ", "AT", "DE", "SK", "IT", "HR"];
 const OVERENO = ["ok", "check", "tbc"];
 const UZAVIRKY = ["plna", "castecna", "provoz", "nezname"];
 const PROFILE = ["flat", "hilly", "mountain"];
 const STATUS = ["confirmed", "provisional", "cancelled"];
+const FORMATY = ["mass-start", "time-trial"];
 
 const DATUM = /^\d{4}-\d{2}-\d{2}$/;
 const MESIC = /^\d{4}-\d{2}$/;
@@ -131,6 +132,27 @@ export function zkontrolujZavod(z: Zavod): KontrolaZavodu {
   }
   if (z.status !== undefined) {
     vytkni(STATUS.includes(z.status), `status: "${z.status}" není povolená hodnota`);
+  }
+  if (z.format !== undefined) {
+    vytkni(FORMATY.includes(z.format), `format: "${z.format}" není povolená hodnota`);
+  }
+
+  // ── německé znění ──
+  if (z.de !== undefined) {
+    for (const pole of ["nazev", "misto", "region", "startovne", "zdroj"] as const) {
+      const h = z.de[pole];
+      if (h !== undefined) vytkni(jeText(h), `de.${pole}: musí být neprázdný text`);
+    }
+    if (z.de.trasy !== undefined) {
+      vytkni(
+        z.de.trasy.length === z.trasy.length,
+        `de.trasy: čekám ${z.trasy.length} názvů (stejně jako trasy), je jich ${z.de.trasy.length}`,
+      );
+      vytkni(z.de.trasy.every(jeText), "de.trasy: názvy musí být neprázdný text");
+    }
+    if (z.de.startovne !== undefined) {
+      vytkni(z.startovne !== null, "de.startovne: vyplněno, ale startovne je null");
+    }
   }
 
   const chybi = ROZSIRENA_POLE.filter((pole) => z[pole] === undefined);

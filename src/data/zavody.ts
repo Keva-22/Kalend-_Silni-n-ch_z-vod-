@@ -43,6 +43,7 @@ export const ZAVODY: Zavod[] = [
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.2
     startLocation: { city: "Sauwald", country: "AT" },
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    de: { zdroj: "Veranstalter" },
   },
   {
     id: "carinthia200-2026", nazev: "Carinthia200",
@@ -64,6 +65,31 @@ export const ZAVODY: Zavod[] = [
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 16.4
     startLocation: { city: "Villach", country: "AT" },
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    de: { zdroj: "Veranstalter" },
+  },
+  {
+    id: "istria300-2026", nazev: "Istria300",
+    misto: "Poreč", region: "Istra", zeme: "HR",
+    // ročník 2026 byl mimořádně posunut z konce září kvůli změnám v kalendáři UCI
+    datum: "2026-10-03", overeno: "check", serie: null,
+    trasy: [
+      { nazev: "Istria300", km: 300.5, hm: 5150 },  // [uncertain]
+      { nazev: "Istria209", km: 209, hm: 3250 },    // [uncertain]
+      { nazev: "Istria135", km: 134.5, hm: 1800 },  // [uncertain]
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.istria300.com",
+    zdroj: "istria300.com (vyhledávání 27. 9. 2026)",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 300.5,  // [uncertain] nejdelší ze 3 tras
+    elevationM: 5150,   // [uncertain]
+    profile: "hilly",   // [uncertain] odvozeno z hm/km = 17.1
+    startLocation: { city: "Poreč", country: "HR" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    registrationUrl: "https://www.istria300.com/istria300-registration/",  // [uncertain] z výpisu vyhledávání, nenačteno
+    sourceUrl: "https://www.istria300.com/istria300-will-take-place-on-a-new-date-next-year/",  // [uncertain]
+    de: { zdroj: "istria300.com (Websuche 27. 9. 2026)" },
   },
   {
     id: "letape-rovinata-2026", nazev: "L'Etape Czech Republic — Rovinatá etapa",
@@ -87,6 +113,37 @@ export const ZAVODY: Zavod[] = [
     series: "L'Etape by Tour de France",
     status: "provisional",  // [uncertain] termín se mezi zdroji rozchází
     sourceUrl: "https://www.letapeczech.cz",  // [uncertain] zdroj "letapeczech.cz" odpovídá doméně webu
+    de: {
+      nazev: "L'Etape Czech Republic — Flache Etappe",
+      region: "Region Pardubice",
+      startovne: "1 990 Kč im Vorverkauf → 3 690 Kč",
+      trasy: ["Hauptstrecke"],
+    },
+  },
+
+  {
+    id: "zadar-2026", nazev: "Zadar Granfondo",
+    misto: "Zadar", region: "Zadarska županija", zeme: "HR",
+    datum: "2026-10-18", overeno: "check", serie: null,
+    // Pozor: web pořadatele má podstránku "GRANFONDO 65km", granfondoguide.com
+    // ale uvádí kratší trasu 56 km / 516 hm. Použito 56 km, rozpor k ověření.
+    trasy: [
+      { nazev: "112 km", km: 112, hm: 1034 },  // [uncertain]
+      { nazev: "56 km", km: 56, hm: 516 },     // [uncertain] rozpor 56 / 65 km
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.zadargranfondo.com",
+    zdroj: "granfondoguide.com, zadargranfondo.com (vyhledávání 27. 9. 2026)",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 112,   // [uncertain] delší ze 2 tras
+    elevationM: 1034,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 9.2
+    // start i cíl u Falkensteiner Resort Borik
+    startLocation: { city: "Zadar", country: "HR" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    sourceUrl: "https://www.granfondoguide.com/Events/Index/8778/zadar-granfondo",  // [uncertain]
+    de: { zdroj: "granfondoguide.com, zadargranfondo.com (Websuche 27. 9. 2026)" },
   },
 
   // ─── 2027 ──────────────────────────────────────────────────────
@@ -114,6 +171,7 @@ export const ZAVODY: Zavod[] = [
     series: "Tiroler Rennrad Cup",
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     sourceUrl: "https://www.imster-radmarathon.at",  // [uncertain] zdroj "imster-radmarathon.at" odpovídá doméně webu
+    de: { startovne: "56 € bis 31. 12. 2026 → 80 € am Renntag" },
   },
   {
     id: "kaernten-2027", nazev: "ARBÖ Kärnten Radmarathon",
@@ -138,6 +196,7 @@ export const ZAVODY: Zavod[] = [
     entryFee: "sleva při brzké registraci · limit 800 startujících",
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     sourceUrl: "https://www.kaernten-radmarathon.at",  // [uncertain] zdroj "kaernten-radmarathon.at" odpovídá doméně webu
+    de: { startovne: "Frühbucherrabatt · Limit 800 Starter" },
   },
   {
     id: "fichtelberg-2027", nazev: "15. Fichtelberg-Radmarathon",
@@ -178,6 +237,12 @@ export const ZAVODY: Zavod[] = [
     entryFee: "1 290 / 1 490 Kč do 31. 12. 2026 → 1 890 / 2 090 Kč",
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     sourceUrl: "https://krakonosuvcyklomaraton.cz",  // [uncertain] zdroj "krakonosuvcyklomaraton.cz" odpovídá doméně webu
+    de: {
+      misto: "Riesengebirge",
+      region: "Region Hradec Králové",
+      startovne: "1 290 / 1 490 Kč bis 31. 12. 2026 → 1 890 / 2 090 Kč",
+      trasy: ["Hauptstrecke", "Kurze Strecke"],
+    },
   },
   {
     id: "mondsee-2027", nazev: "Mondsee 5 Seen Radmarathon",
@@ -219,6 +284,7 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "Nauders", country: "AT" },
     status: "provisional",  // [uncertain] odvozeno z overeno="check"
     sourceUrl: "https://www.dreilaendergiro.at",  // [uncertain] domovská stránka pořadatele
+    de: { zdroj: "dreilaendergiro.at / tirol.at (Websuche 27. 9. 2026)" },
   },
   {
     id: "tannheim-2027", nazev: "Rad-Marathon Tannheimer Tal",
@@ -304,6 +370,34 @@ export const ZAVODY: Zavod[] = [
     registrationUrl: "https://kitzbueheler-radmarathon.at/anmeldung/",  // [uncertain] z výpisu vyhledávání, nenačteno
     resultsUrl: "https://kitzbueheler-radmarathon.at/rennen/ergebnisse/",  // [uncertain] z výpisu vyhledávání, nenačteno
     sourceUrl: "https://www.kitzbuehel.com/events/alle-highlight-veranstaltungen/kitzbueheler-radmarathon/",  // [uncertain]
+    de: { zdroj: "kitzbuehel.com (Termin), kitzbueheler-radmarathon.at (Strecken), Websuche 27. 9. 2026" },
+  },
+
+  {
+    id: "kotl-2027", nazev: "King of the Lake",
+    misto: "Schörfling am Attersee", region: "Oberösterreich", zeme: "AT",
+    // pořadatel uvádí termín jako předběžný (vždy 3. sobota v září)
+    datum: "2027-09-18", overeno: "check", serie: null,
+    // časovka jednotlivců kolem Attersee, start po jednom
+    trasy: [{ nazev: "Okruh kolem Attersee", km: 47.2, hm: 280 }],  // [uncertain]
+    uzavirky: "plna",  // [uncertain] dle spoferan.com je silnice kolem jezera zcela uzavřená
+    startovne: null,
+    web: "https://www.kotl.at",
+    zdroj: "kotl.at (předběžný termín), spoferan.com (trasa), vyhledávání 27. 9. 2026",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 47.2,  // [uncertain]
+    elevationM: 280,   // [uncertain]
+    profile: "flat",   // [uncertain] odvozeno z hm/km = 5.9
+    startTime: "13:00",  // [uncertain] první start v ročníku 2026
+    startLocation: { city: "Schörfling am Attersee", country: "AT" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    sourceUrl: "https://www.kotl.at",  // [uncertain] domovská stránka pořadatele
+    format: "time-trial",
+    de: {
+      zdroj: "kotl.at (vorläufiger Termin), spoferan.com (Strecke), Websuche 27. 9. 2026",
+      trasy: ["Runde um den Attersee"],
+    },
   },
 
   // ─── 2027, termín zatím nevyhlášen ─────────────────────────────
@@ -328,6 +422,13 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "Praha a okolí", country: "CZ" },
     series: "L'Etape by Tour de France",
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    de: {
+      nazev: "L'Etape Czech Republic — Hügelige Etappe",
+      misto: "Prag und Umgebung",
+      region: "Prag",
+      zdroj: "Ausgabe 2026 zur Orientierung",
+      trasy: ["Kurz", "Mittel", "Lang"],
+    },
   },
   {
     id: "letape-rovinata-2027", nazev: "L'Etape Czech Republic — Rovinatá etapa",
@@ -346,6 +447,13 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "Pardubicko", country: "CZ" },
     series: "L'Etape by Tour de France",
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    de: {
+      nazev: "L'Etape Czech Republic — Flache Etappe",
+      misto: "Umgebung von Pardubice",
+      region: "Region Pardubice",
+      zdroj: "Ausgabe 2026 zur Orientierung",
+      trasy: ["Hauptstrecke"],
+    },
   },
   {
     id: "sauwald-2027", nazev: "SauwaldGiro",
@@ -368,6 +476,7 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "St. Roman bei Schärding", country: "AT" },
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
     sourceUrl: "https://www.sauwaldgiro.at",  // [uncertain] domovská stránka pořadatele
+    de: { zdroj: "sauwaldgiro.at / radmarathon.at (Websuche 27. 9. 2026); Termin 2027 noch nicht bekannt" },
   },
   {
     id: "kufstein-2027", nazev: "Kufsteinerland Radmarathon",
@@ -391,6 +500,7 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "Kufstein", country: "AT" },
     series: "Tiroler Rennrad Cup",
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    de: { zdroj: "Ausgabe 2026 zur Orientierung" },
   },
   {
     id: "oetztaler-2027", nazev: "Ötztaler Radmarathon",
@@ -407,6 +517,7 @@ export const ZAVODY: Zavod[] = [
     profile: "mountain",  // [uncertain] odvozeno z hm/km = 24.2
     startLocation: { city: "Sölden", country: "AT" },
     status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    de: { zdroj: "Termin: central-soelden.com + intervalcoach.app (Websuche 27. 9. 2026); Strecke laut Ausgabe 2026" },
   },
   {
     id: "carinthia200-2027", nazev: "Carinthia200",
@@ -428,6 +539,51 @@ export const ZAVODY: Zavod[] = [
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 16.4
     startLocation: { city: "Villach", country: "AT" },
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    de: { zdroj: "Ausgabe 2026 zur Orientierung" },
+  },
+  {
+    id: "istria300-2027", nazev: "Istria300",
+    misto: "Poreč", region: "Istra", zeme: "HR",
+    datum: null, odhadMesic: "2027-09", overeno: "tbc", serie: null,
+    trasy: [
+      { nazev: "Istria300", km: 300.5, hm: 5150 },  // [uncertain]
+      { nazev: "Istria209", km: 209, hm: 3250 },    // [uncertain]
+      { nazev: "Istria135", km: 134.5, hm: 1800 },  // [uncertain]
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.istria300.com",
+    zdroj: "termín 2027 zatím nevyhlášen; měsíc odhadnut podle ročníku 2025 (27. 9.), ročník 2026 byl mimořádně posunut na 3. 10.",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 300.5,  // [uncertain] nejdelší ze 3 tras
+    elevationM: 5150,   // [uncertain]
+    profile: "hilly",   // [uncertain] odvozeno z hm/km = 17.1
+    startLocation: { city: "Poreč", country: "HR" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    de: { zdroj: "Termin 2027 noch nicht bekannt; Monat geschätzt nach der Ausgabe 2025 (27. 9.), die Ausgabe 2026 wurde ausnahmsweise auf den 3. 10. verschoben" },
+  },
+  {
+    id: "zadar-2027", nazev: "Zadar Granfondo",
+    misto: "Zadar", region: "Zadarska županija", zeme: "HR",
+    datum: null, odhadMesic: "2027-10", overeno: "tbc", serie: null,
+    // Pozor: web pořadatele má podstránku "GRANFONDO 65km", granfondoguide.com
+    // ale uvádí kratší trasu 56 km / 516 hm. Použito 56 km, rozpor k ověření.
+    trasy: [
+      { nazev: "112 km", km: 112, hm: 1034 },  // [uncertain]
+      { nazev: "56 km", km: 56, hm: 516 },     // [uncertain] rozpor 56 / 65 km
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.zadargranfondo.com",
+    zdroj: "ročník 2026 pro orientaci",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 112,   // [uncertain] delší ze 2 tras
+    elevationM: 1034,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 9.2
+    // start i cíl u Falkensteiner Resort Borik
+    startLocation: { city: "Zadar", country: "HR" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    de: { zdroj: "Ausgabe 2026 zur Orientierung" },
   },
 ];
 

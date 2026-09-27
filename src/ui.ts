@@ -1,18 +1,20 @@
-import type { Uzavirky, Zavod } from "./types";
+import type { Zavod } from "./types";
 
-/* Sdílené odvozené hodnoty a pomocné funkce pro kalendář. */
+/* Sdílené odvozené hodnoty a pomocné funkce pro kalendář.
+   Texty (názvy profilů, měsíců, dnů…) jsou v i18n.ts. */
+
+export type KlicProfilu = "rovina" | "zvlnena" | "kopcovita" | "horska";
 
 export interface ProfilTrati {
-  klic: "rovina" | "zvlnena" | "kopcovita" | "horska";
-  nazev: string;
+  klic: KlicProfilu;
   max: number; // horní hranice převýšení na kilometr (hm/km)
 }
 
 export const PROFILY: ProfilTrati[] = [
-  { klic: "rovina", nazev: "rovina", max: 8 },
-  { klic: "zvlnena", nazev: "zvlněná", max: 15 },
-  { klic: "kopcovita", nazev: "kopcovitá", max: 22 },
-  { klic: "horska", nazev: "horská", max: Infinity },
+  { klic: "rovina", max: 8 },
+  { klic: "zvlnena", max: 15 },
+  { klic: "kopcovita", max: 22 },
+  { klic: "horska", max: Infinity },
 ];
 
 interface MerenaTrasa {
@@ -50,18 +52,3 @@ export function profilZavodu(zavod: Zavod): ProfilZavodu | null {
 export function klicMesice(zavod: Zavod): string {
   return zavod.datum ? zavod.datum.slice(0, 7) : (zavod.odhadMesic ?? "");
 }
-
-export const UZAVIRKY: Record<Uzavirky, { text: string }> = {
-  plna: { text: "Plně uzavřené silnice" },
-  castecna: { text: "Částečně uzavřené" },
-  provoz: { text: "Za provozu" },
-  nezname: { text: "Uzavírky neověřeny" },
-};
-
-export const MESICE = [
-  "leden", "únor", "březen", "duben", "květen", "červen",
-  "červenec", "srpen", "září", "říjen", "listopad", "prosinec",
-];
-
-/** Zkratky dnů indexované podle Date.getDay() (neděle = 0). */
-export const DNY = ["ne", "po", "út", "st", "čt", "pá", "so"];

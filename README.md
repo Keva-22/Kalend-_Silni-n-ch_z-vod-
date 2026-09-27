@@ -1,8 +1,9 @@
 # Roadbook — kalendář silničních maratonů střední Evropy
 
-Kalendář silničních hromadných závodů v Česku a Rakousku, plus příhraniční
-Německo, Slovensko a Itálie. Každý řádek seznamu nese kilometry, převýšení
-a profil trati — bez prokliku.
+Kalendář silničních závodů v Česku a Rakousku, plus příhraniční Německo,
+Slovensko a Itálie a vybrané závody v Chorvatsku. Převážně hromadné starty,
+časovky jsou v seznamu označené. Každý řádek nese kilometry, převýšení
+a profil trati — bez prokliku. Rozhraní je česky a německy.
 
 Stack: Vite + React + TypeScript, deploy na GitHub Pages. Žádný backend —
 všechna data žijí v jednom typovaném souboru `src/data/zavody.ts`.
@@ -34,7 +35,7 @@ překlepy v polích i chybějící hodnoty.
   nazev: "Mondsee 5 Seen Radmarathon",
   misto: "Mondsee",
   region: "Oberösterreich",
-  zeme: "AT",                      // jen 'CZ' | 'AT' | 'DE' | 'SK' | 'IT'
+  zeme: "AT",                      // jen 'CZ' | 'AT' | 'DE' | 'SK' | 'IT' | 'HR'
   datum: "2027-06-20",             // 'YYYY-MM-DD'; null = termín zatím nevyhlášen
   odhadMesic: "2027-06",           // 'YYYY-MM'; povinné, když datum === null (jinak vynech)
   overeno: "check",                // viz níže
@@ -99,6 +100,8 @@ Model má navíc 16 volitelných polí. Kterékoli z nich se smí vynechat —
 | `status` | `'confirmed' \| 'provisional' \| 'cancelled'` | stav konání závodu |
 | `lastVerified` | `string` | `'YYYY-MM-DD'`, kdy byl záznam naposledy ověřen |
 | `sourceUrl` | `string` | URL zdroje, musí začínat `https://` |
+| `format` | `'mass-start' \| 'time-trial'` | vynechané = hromadný start; časovka dostane v seznamu štítek |
+| `de` | `{ nazev?, misto?, region?, startovne?, zdroj?, trasy? }` | německé znění, viz [Němčina](#němčina) |
 
 ### Značka `// [uncertain]`
 
@@ -119,17 +122,45 @@ co je potřeba potvrdit.
 - **`series: undefined` neznamená „dohledat".** U závodu, který do žádné
   série nepatří, je to správný stav — stejně jako `serie: null`.
 
+## Němčina
+
+Web má přepínač Česky / Deutsch v hlavičce. Výchozí jazyk je čeština;
+návštěvník s německy nastaveným prohlížečem dostane rovnou němčinu. Volba
+se pamatuje v prohlížeči. Žádná knihovna na překlady se nepoužívá.
+
+**Texty rozhraní** jsou ve slovníku `src/i18n.ts` (`CS` a `DE`). Oba
+slovníky mají stejný typ `Texty`, takže když nový text doplníš jen do
+jednoho jazyka, build spadne.
+
+**Texty v datech** se překládají polem `de` přímo u závodu. Vyplň jen to,
+co je v originále česky nebo se v němčině říká jinak:
+
+```ts
+de: {
+  misto: "Riesengebirge",          // Krkonoše
+  region: "Region Hradec Králové",
+  startovne: "1 290 Kč bis 31. 12. 2026 → 1 890 Kč",
+  trasy: ["Hauptstrecke", "Kurze Strecke"],  // stejné pořadí jako trasy[]
+},
+```
+
+Co v `de` chybí, zobrazí se v originále. Vlastní jména (rakouská místa,
+názvy závodů, německé názvy tras) se nepřekládají. Když píšeš nový závod
+s českým `zdroj` nebo `startovne`, přidej rovnou i `de` — jinak se
+v německé verzi objeví česky.
+
 ## Kontrola dat
 
 `src/validace.ts` kontroluje to, co typový systém neuhlídá: formát data,
-rozsahy čísel, tvar URL, opakovaná `id` a povinný `odhadMesic` u závodů
-bez termínu. Zároveň hlásí, která rozšířená pole ještě nejsou doplněná.
+rozsahy čísel, tvar URL, opakovaná `id`, povinný `odhadMesic` u závodů
+bez termínu a u `de.trasy` stejný počet názvů jako tras. Zároveň hlásí,
+která rozšířená pole ještě nejsou doplněná.
 
 Spouští se automaticky při `npm run dev` a vypisuje do konzole prohlížeče.
 V produkčním buildu se do bundlu vůbec nezabalí.
 
 ```
-Kontrola dat: 17 z 17 závodů nemá doplněná všechna rozšířená pole
+Kontrola dat: 25 z 25 závodů nemá doplněná všechna rozšířená pole
   oetztaler-2026 — chybí: startTime, categories, entryFee, ...
 ```
 

@@ -89,7 +89,40 @@ a:focus-visible {
   background: var(--akcent-plocha);
   padding: 5px 10px;
   border-radius: var(--radius-pilulka);
+}
+
+.hlavicka-horni {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--mezera-3);
   margin-bottom: 18px;
+}
+
+/* přepínač jazyka — segmentovaný ovladač v hlavičce */
+.jazyky {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--plocha);
+  border: 1px solid var(--linka);
+  border-radius: var(--radius-pilulka);
+}
+
+.jazyky .prepinac {
+  font-family: var(--body);
+  font-size: 12px;
+  padding: 5px 12px;
+  letter-spacing: 0;
+}
+
+.jazyky .prepinac.aktivni,
+.jazyky .prepinac.aktivni:hover {
+  background: var(--text);
+  color: var(--plocha);
+  border-color: var(--text);
+  box-shadow: none;
 }
 
 .hlavicka h1 {
@@ -339,6 +372,12 @@ a:focus-visible {
   color: var(--text-slaby);
   background: var(--pozadi);
   border: 1px solid var(--linka-vyrazna);
+}
+
+.odznak--casovka {
+  color: var(--plocha);
+  background: var(--text-tlum);
+  border-color: transparent;
 }
 
 .odznak--uzavreno {
