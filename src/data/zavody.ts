@@ -85,10 +85,11 @@ export const ZAVODY: Zavod[] = [
     id: "imst-2027", nazev: "Imster Radmarathon",
     misto: "Imst", region: "Tirol", zeme: "AT",
     datum: "2027-05-23", overeno: "ok", serie: "Tiroler Rennrad Cup",
+    // km/hm dle posledního odjetého ročníku; zdroj: imst.at, radsport-rennrad.de
     trasy: [
-      { nazev: "Strecke A", km: null, hm: null },
-      { nazev: "Strecke B", km: null, hm: null },
-      { nazev: "Panoramarunde", km: null, hm: null },
+      { nazev: "Strecke A", km: 110, hm: 2300 },    // [uncertain]
+      { nazev: "Strecke B", km: 90, hm: 1300 },     // [uncertain] zdroj uvádí "ca. 90 km"
+      { nazev: "Panoramarunde", km: 70, hm: 700 },  // [uncertain]
     ],
     uzavirky: "nezname",
     startovne: "56 € do 31. 12. 2026 → 80 € v den závodu",
@@ -96,6 +97,9 @@ export const ZAVODY: Zavod[] = [
     zdroj: "imster-radmarathon.at",
 
     /* ── rozšířená pole ── */
+    distanceKm: 110,   // [uncertain] nejdelší ze 3 tras, ročník 2026
+    elevationM: 2300,  // [uncertain] ročník 2026
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 20.9
     startLocation: { city: "Imst", country: "AT" },
     entryFee: "56 € do 31. 12. 2026 → 80 € v den závodu",
     series: "Tiroler Rennrad Cup",
@@ -106,13 +110,21 @@ export const ZAVODY: Zavod[] = [
     id: "kaernten-2027", nazev: "ARBÖ Kärnten Radmarathon",
     misto: "Bad Kleinkirchheim", region: "Kärnten", zeme: "AT",
     datum: "2027-06-06", overeno: "ok", serie: null,
-    trasy: [{ nazev: "Nockberge", km: null, hm: null }],
+    // Pozor: prameny se u převýšení rozcházejí (2140 / 2150 / 2236 / 2360 hm).
+    // Použito 2140 hm dle nockalmstrasse.at; délka 106 km je napříč zdroji shodná.
+    trasy: [
+      { nazev: "Nockberge", km: 106, hm: 2140 },     // [uncertain] rozpor mezi zdroji
+      { nazev: "2-Seen-Runde", km: 65, hm: null },   // [uncertain] převýšení zdroj neuvádí
+    ],
     uzavirky: "nezname",
     startovne: "sleva při brzké registraci · limit 800 startujících",
     web: "https://www.kaernten-radmarathon.at",
     zdroj: "kaernten-radmarathon.at",
 
     /* ── rozšířená pole ── */
+    distanceKm: 106,   // [uncertain] delší ze 2 tras
+    elevationM: 2140,  // [uncertain] prameny uvádějí 2140 až 2360 hm
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 20.2
     startLocation: { city: "Bad Kleinkirchheim", country: "AT" },
     entryFee: "sleva při brzké registraci · limit 800 startujících",
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
@@ -137,14 +149,23 @@ export const ZAVODY: Zavod[] = [
     id: "krakonos-2027", nazev: "Casia Krakonošův cyklomaraton",
     misto: "Krkonoše", region: "Královéhradecký kraj", zeme: "CZ",
     datum: "2027-06-12", overeno: "ok", serie: null,
-    trasy: [{ nazev: "Hlavní trasa", km: null, hm: null }],
+    // km/hm dle 13. ročníku (13. 6. 2026); zdroje uvádějí hodnoty jako přibližné
+    trasy: [
+      { nazev: "Hlavní trasa", km: 140, hm: 2300 },  // [uncertain] zdroj uvádí "cca"
+      { nazev: "Krátká trasa", km: 90, hm: 1200 },   // [uncertain] zdroj uvádí "cca"
+    ],
     uzavirky: "nezname",
     startovne: "1 290 / 1 490 Kč do 31. 12. 2026 → 1 890 / 2 090 Kč",
     web: "https://krakonosuvcyklomaraton.cz",
     zdroj: "krakonosuvcyklomaraton.cz",
 
     /* ── rozšířená pole ── */
-    startLocation: { city: "Krkonoše", country: "CZ" },
+    distanceKm: 140,   // [uncertain] delší ze 2 tras, ročník 2026
+    elevationM: 2300,  // [uncertain] ročník 2026
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 16.4
+    startTime: "10:00",  // [uncertain] čas startu dlouhé trasy v ročníku 2026
+    // start i cíl je u centra UFFO v Trutnově; pole misto zůstává "Krkonoše"
+    startLocation: { city: "Trutnov", country: "CZ" },
     entryFee: "1 290 / 1 490 Kč do 31. 12. 2026 → 1 890 / 2 090 Kč",
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     sourceUrl: "https://krakonosuvcyklomaraton.cz",  // [uncertain] zdroj "krakonosuvcyklomaraton.cz" odpovídá doméně webu
@@ -170,15 +191,45 @@ export const ZAVODY: Zavod[] = [
     status: "provisional",  // [uncertain] odvozeno z overeno="check"
   },
   {
+    id: "dreilaendergiro-2027", nazev: "Dreiländergiro",
+    misto: "Nauders", region: "Tirol", zeme: "AT",
+    datum: "2027-06-27", overeno: "check", serie: null,
+    // trasa vede přes Rakousko, Itálii a Švýcarsko (Stilfserjoch, Umbrailpass)
+    trasy: [
+      { nazev: "Strecke A – Stelvio Engadin", km: 168, hm: 3300 },   // [uncertain]
+      { nazev: "Strecke B – Stelvio Vinschgau", km: 120, hm: 3000 }, // [uncertain]
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.dreilaendergiro.at",
+    zdroj: "dreilaendergiro.at / tirol.at (vyhledávání 27. 9. 2026)",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 168,   // [uncertain] nejdelší ze 2 tras
+    elevationM: 3300,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 19.6
+    startLocation: { city: "Nauders", country: "AT" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    sourceUrl: "https://www.dreilaendergiro.at",  // [uncertain] domovská stránka pořadatele
+  },
+  {
     id: "tannheim-2027", nazev: "Rad-Marathon Tannheimer Tal",
     misto: "Tannheimer Tal", region: "Tirol", zeme: "AT",
     datum: "2027-07-04", overeno: "ok", serie: null,
-    trasy: [{ nazev: "Marathon", km: null, hm: null }],
+    // km/hm dle rad-marathon.at, kde jsou trasy pojmenované délkou
+    trasy: [
+      { nazev: "Marathon", km: 214, hm: 3500 },      // [uncertain]
+      { nazev: "Strecke 138 km", km: 138, hm: 870 }, // [uncertain]
+      { nazev: "Strecke 103 km", km: 103, hm: 760 }, // [uncertain]
+      { nazev: "Strecke 66 km", km: 66, hm: 600 },   // [uncertain]
+    ],
     uzavirky: "nezname", startovne: null,
     web: "https://www.rad-marathon.at",
     zdroj: "rad-marathon.at",
 
     /* ── rozšířená pole ── */
+    distanceKm: 214,   // [uncertain] nejdelší ze 4 tras
+    elevationM: 3500,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 16.4
     startLocation: { city: "Tannheimer Tal", country: "AT" },
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     sourceUrl: "https://www.rad-marathon.at",  // [uncertain] zdroj "rad-marathon.at" odpovídá doméně webu
@@ -187,16 +238,20 @@ export const ZAVODY: Zavod[] = [
     id: "wachau-2027", nazev: "Wachau Radmarathon",
     misto: "Mautern an der Donau", region: "Niederösterreich", zeme: "AT",
     datum: "2027-07-18", overeno: "ok", serie: null,
+    // zástupné názvy nahrazeny oficiálními; km/hm dle wachau-radmarathon.at
     trasy: [
-      { nazev: "Trasa 1", km: null, hm: null },
-      { nazev: "Trasa 2", km: null, hm: null },
-      { nazev: "Trasa 3", km: null, hm: null },
+      { nazev: "Wachau Light Radmarathon", km: 53.2, hm: 463 },      // [uncertain]
+      { nazev: "Raiffeisen Power Radmarathon", km: 103.5, hm: 953 }, // [uncertain]
+      { nazev: "Krone Champions Radmarathon", km: 200, hm: 3058 },   // [uncertain]
     ],
     uzavirky: "nezname", startovne: null,
     web: "https://www.wachau-radmarathon.at",
     zdroj: "wachau-radmarathon.at",
 
     /* ── rozšířená pole ── */
+    distanceKm: 200,   // [uncertain] nejdelší ze 3 tras
+    elevationM: 3058,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.3
     startLocation: { city: "Mautern an der Donau", country: "AT" },
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     sourceUrl: "https://www.wachau-radmarathon.at",  // [uncertain] zdroj "wachau-radmarathon.at" odpovídá doméně webu
@@ -216,6 +271,30 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "St. Anton am Arlberg", country: "AT" },
     series: "Tiroler Rennrad Cup",
     status: "provisional",  // [uncertain] odvozeno z overeno="check"
+  },
+
+  {
+    id: "kitzbuehel-2027", nazev: "Kitzbüheler Radmarathon",
+    misto: "Kitzbühel", region: "Tirol", zeme: "AT",
+    datum: "2027-09-05", overeno: "check", serie: null,
+    // hlavní trasa končí výjezdem na Kitzbüheler Horn, KRM Kitz cílí ve Vorderstadt
+    trasy: [
+      { nazev: "Marathon", km: 216, hm: 4600 },  // [uncertain]
+      { nazev: "KRM Kitz", km: 209, hm: 3800 },  // [uncertain]
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://kitzbueheler-radmarathon.at",
+    zdroj: "kitzbuehel.com (termín), kitzbueheler-radmarathon.at (trasy), vyhledávání 27. 9. 2026",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 216,   // [uncertain] nejdelší ze 2 tras
+    elevationM: 4600,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 21.3
+    startLocation: { city: "Kitzbühel", country: "AT" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    registrationUrl: "https://kitzbueheler-radmarathon.at/anmeldung/",  // [uncertain] z výpisu vyhledávání, nenačteno
+    resultsUrl: "https://kitzbueheler-radmarathon.at/rennen/ergebnisse/",  // [uncertain] z výpisu vyhledávání, nenačteno
+    sourceUrl: "https://www.kitzbuehel.com/events/alle-highlight-veranstaltungen/kitzbueheler-radmarathon/",  // [uncertain]
   },
 
   // ─── 2027, termín zatím nevyhlášen ─────────────────────────────
@@ -264,12 +343,20 @@ export const ZAVODY: Zavod[] = [
     misto: "Kufstein", region: "Tirol", zeme: "AT",
     datum: null, odhadMesic: "2027-08", overeno: "tbc",
     serie: "Tiroler Rennrad Cup",
-    trasy: [{ nazev: "Marathon", km: null, hm: null }],
+    // km/hm dle 10. ročníku (23. 8. 2026); zdroj: kufsteinerland-radmarathon.at
+    trasy: [
+      { nazev: "Marathon", km: 120, hm: 1800 },     // [uncertain] zdroj uvádí "ca. 1800 hm"
+      { nazev: "Seenrunde", km: 95, hm: 1160 },     // [uncertain]
+      { nazev: "Panoramarunde", km: 48, hm: 400 },  // [uncertain]
+    ],
     uzavirky: "nezname", startovne: null,
     web: "https://www.kufsteinerland-radmarathon.at",
     zdroj: "ročník 2026 pro orientaci",
 
     /* ── rozšířená pole ── */
+    distanceKm: 120,   // [uncertain] nejdelší ze 3 tras, ročník 2026
+    elevationM: 1800,  // [uncertain] ročník 2026
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.0
     startLocation: { city: "Kufstein", country: "AT" },
     series: "Tiroler Rennrad Cup",
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
