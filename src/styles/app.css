@@ -1053,6 +1053,154 @@ button.pr-tlacitko {
   justify-self: start;
 }
 
+/* panel „Meine Anmeldungen" */
+.pr-ja {
+  margin: 0 var(--mezera-4) var(--mezera-3);
+  padding: 16px 18px;
+  background: var(--plocha);
+  border: 1px solid var(--linka);
+  border-left: 3px solid var(--akcent);
+  border-radius: var(--radius);
+  box-shadow: var(--stin);
+}
+
+.pr-ja-hlava {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.pr-ja-popis {
+  margin: 8px 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-tlum);
+}
+
+.pr-ja-popisek {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-slaby);
+}
+
+.pr-odkaz-radek {
+  display: flex;
+  gap: 8px;
+}
+
+.pr-odkaz-radek input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-tlum);
+  background: var(--plocha-tlum);
+  border: 1px solid var(--linka-vyrazna);
+  border-radius: var(--radius-male);
+}
+
+.pr-zapomen {
+  margin-top: 12px;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-slaby);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pr-zapomen:hover {
+  color: var(--text);
+}
+
+.pr-stav {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-male);
+  white-space: nowrap;
+}
+
+.pr-stav--ceka {
+  color: var(--profil-zvlnena);
+  background: #fbf3e2;
+}
+
+.pr-stav--schvaleno {
+  color: var(--akcent);
+  background: var(--akcent-plocha);
+}
+
+.pr-stav--zamitnuto {
+  color: var(--text-slaby);
+  background: var(--pozadi);
+}
+
+.pr-napoveda {
+  font-size: 11.5px;
+  color: var(--text-slaby);
+}
+
+.pr-tlacitka {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.pr-smazat {
+  padding: 8px 13px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--profil-horska);
+  background: transparent;
+  border: 1px solid var(--linka-vyrazna);
+  border-radius: var(--radius-pilulka);
+  cursor: pointer;
+}
+
+.pr-smazat:hover {
+  border-color: var(--profil-horska);
+}
+
+.pr-smazat:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.pr-mozna {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  color: var(--text-tlum);
+  border: 1px dashed var(--linka-vyrazna);
+  border-radius: var(--radius-male);
+}
+
+.pr-du {
+  font-weight: 400;
+  color: var(--text-slaby);
+}
+
+.pr-ucastnik--ja .pr-jmeno {
+  color: var(--akcent-tmavy);
+}
+
 /* past na roboty: mimo obrazovku, ne display:none (to by roboti poznali) */
 .pr-past {
   position: absolute;
@@ -1129,6 +1277,11 @@ button.pr-tlacitko {
 
   .pr-formular {
     margin: 0 12px var(--mezera-3);
+  }
+
+  .pr-ja {
+    margin-left: var(--mezera-2);
+    margin-right: var(--mezera-2);
   }
 
   .pr-radek-poli {

@@ -29,13 +29,18 @@ function zavodZHash(): Zavod | null {
 
 const ZAVOD_Z_URL = zavodZHash();
 
-/* Vedlejší stránka s přihláškami: #mitfahren, případně #mitfahren/<id>. */
-type Stranka = { typ: "kalendar" } | { typ: "prihlasky"; zavod: string | null };
+/* Vedlejší stránka s přihláškami: #mitfahren, #mitfahren/<id závodu>,
+   nebo osobní odkaz #mitfahren/ich/<klíč>. */
+type Stranka =
+  | { typ: "kalendar" }
+  | { typ: "prihlasky"; zavod: string | null; klic: string | null };
 
 function strankaZHash(): Stranka {
   const shoda = window.location.hash.match(/^#mitfahren(?:\/(.+))?$/);
   if (!shoda) return { typ: "kalendar" };
-  return { typ: "prihlasky", zavod: shoda[1] ? decodeURIComponent(shoda[1]) : null };
+  const cesta = shoda[1] ? decodeURIComponent(shoda[1]) : "";
+  if (cesta.startsWith("ich/")) return { typ: "prihlasky", zavod: null, klic: cesta.slice(4) };
+  return { typ: "prihlasky", zavod: cesta || null, klic: null };
 }
 
 export default function App() {
@@ -128,7 +133,7 @@ export default function App() {
   const volbyZeme: (Zeme | "vse")[] = ["vse", ...dostupneZeme];
 
   if (stranka.typ === "prihlasky") {
-    return <Prihlasky cilovyZavod={stranka.zavod} />;
+    return <Prihlasky cilovyZavod={stranka.zavod} klicZOdkazu={stranka.klic} />;
   }
 
   return (

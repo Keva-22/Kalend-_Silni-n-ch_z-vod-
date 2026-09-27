@@ -154,14 +154,23 @@ v německé verzi objeví česky.
 ## Přihlášky („Wer fährt mit?")
 
 Vedlejší stránka `#mitfahren` (jen německy): návštěvník se u závodu
-přihlásí formulářem přímo na webu — jméno, trasa, tempo, jestli má nebo
-hledá odvoz, komentář. Nic se nezobrazí hned: nejdřív ti přijde e-mail
-s tlačítky **Schválit / Zamítnout** a teprve po schválení přihlášku uvidí
-všichni.
+přihlásí formulářem přímo na webu — **jede / možná (vielleicht)**, trasa,
+tempo, jestli má nebo hledá odvoz, komentář. Svou přihlášku může kdykoli
+**změnit nebo zrušit**.
+
+**Schvaluje se osoba, ne každá přihláška.** Kdo se přihlásí poprvé, tomu
+nic nezobrazí hned — tobě přijde e-mail s tlačítky **Schválit /
+Zamítnout**. Jakmile osobu jednou schválíš, její další přihlášky i změny
+se na webu objeví rovnou a e-mail už nechodí.
+
+Osobu poznáme podle tajného **osobního klíče**, který dostane při první
+přihlášce a zapamatuje si ho prohlížeč. Na jiné zařízení si ho přenese
+osobním odkazem (`#mitfahren/ich/<klíč>`), který vidí na stránce nahoře.
+Podle jména se osoba nepozná záměrně — jinak by se kdokoli mohl vydávat
+za už schváleného člověka. Od lidí nechceme e-mail ani heslo.
 
 Serverovou část obstarává **Google Apps Script** (`apps-script/prihlasky.gs`)
-připojený ke Google Tabulce, zdarma pod tvým účtem. Přihlášky ukládá do
-tabulky, posílá ti e-maily a webu vydává jen schválené. Web sám zůstává
+připojený ke Google Tabulce, zdarma pod tvým účtem. Web sám zůstává
 statický.
 
 Dokud je v `src/data/prihlasky.ts` prázdná `PRIHLASKY_URL`, je funkce
@@ -182,7 +191,7 @@ a vlož celý obsah souboru
 *▶ Spustit*. Google chce oprávnění: *Zkontrolovat oprávnění* → tvůj účet →
 „Google tuto aplikaci neověřil" → *Rozšířené* → *Přejít na projekt* →
 *Povolit*. (Je to tvůj vlastní skript, proto ho Google neověřoval.) Přijde
-ti zkušební e-mail a v tabulce vznikne list „Přihlášky".
+ti zkušební e-mail a v tabulce vzniknou listy „Osoby" a „Přihlášky".
 
 **4. Nasazení.** *Nasadit → Nové nasazení* → u „Vyberte typ" ozubené
 kolečko → *Webová aplikace*. Spustit jako: **Já**, kdo má přístup:
@@ -194,20 +203,32 @@ Kontrola: adresa otevřená v prohlížeči ukáže
 
 ### Schvalování
 
-Každá přihláška ti přijde e-mailem se vším, co člověk vyplnil, a dvěma
-tlačítky **✓ Schválit** a **✕ Zamítnout**. Schválená se na webu objeví
-při dalším načtení stránky. Stav jde měnit i přímo v tabulce ve sloupci
-*Stav* (`schváleno` / `zamítnuto`, stačí i `ano`).
+E-mail přijde jen tehdy, když se přihlásí **nová osoba**. Obsahuje, co
+vyplnila, a tlačítka **✓ Schválit** a **✕ Zamítnout**. Tlačítka fungují
+i později: zamítnutím kdykoli skryješ všechny přihlášky té osoby
+a schválením je zase vrátíš.
+
+V tabulce jsou dva listy:
+
+- **Osoby** — jméno a stav (`čeká` / `schváleno` / `zamítnuto`). Stav
+  můžeš přepsat i ručně, stačí `ano` nebo `ne`. Místo klíče je tu jen
+  jeho otisk, takže ani z tabulky se za nikoho vydávat nejde.
+- **Přihlášky** — jedna řádka na osobu a závod (jede / možná, trasa,
+  tempo, odvoz, komentář).
 
 ### Co je veřejné a jak je to chráněné
 
-- Web dostane **jen schválené** přihlášky a jen závod, jméno, trasu,
-  tempo, odvoz a komentář. Neschválené vidíš jen ty v tabulce.
-- Odkazy Schválit / Zamítnout obsahují tajný token, bez e-mailu je nikdo
-  nepoužije.
-- Skryté pole jako past na roboty, nejvýš 60 přihlášek denně (Gmail smí
-  poslat 100 e-mailů denně), omezená délka polí. Text z formuláře se do
-  tabulky ukládá vždy jako text, nikdy jako vzorec.
+- Web dostane **jen přihlášky schválených osob** a jen jméno, závod,
+  účast, trasu, tempo, odvoz a komentář. Kdo ještě čeká, vidí svou
+  přihlášku jen sám (s poznámkou „nur für dich sichtbar").
+- Upravit nebo smazat přihlášku jde jen s osobním klíčem té osoby.
+- Skryté pole jako past na roboty, nejvýš 40 nových osob denně (každá je
+  jeden e-mail, Gmail smí 100 denně), nejvýš 40 změn na osobu, omezená
+  délka polí. Text z formuláře se do tabulky ukládá vždy jako text, nikdy
+  jako vzorec.
+- Schválená osoba může měnit i své jméno a změna se ukáže hned — to je
+  cena za „schválit jen jednou". Když něco nesedí, zamítni ji tlačítkem
+  z původního e-mailu.
 
 ### Když se skript změní
 
