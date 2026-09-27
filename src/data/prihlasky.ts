@@ -5,4 +5,5 @@
    je funkce vypnutá: odkazy se nezobrazují a stránka #mitfahren jen oznámí,
    že ještě není spuštěná. */
 
-export const PRIHLASKY_URL = "";
+export const PRIHLASKY_URL: string =
+  "https://script.google.com/macros/s/AKfycbxSumYT_Rj_JUhxjnGVA8o8WuTjr-hbGSqqz4me_vyp-4FVOSPgGCFWcX_yGNOUr0eD/exec";
