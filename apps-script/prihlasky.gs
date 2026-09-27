@@ -18,6 +18,10 @@
 
 const WEB = "https://keva-22.github.io/Kalend-_Silni-n-ch_z-vod-/#mitfahren";
 
+// Kam chodí e-maily ke schválení. Prázdné = na účet, pod kterým skript běží
+// (vlastník tabulky). Chceš je jinam? Napiš sem adresu, např. "ja@example.com".
+const EMAIL_SPRAVCE = "";
+
 const LIST_OSOBY = "Osoby";
 const HLAVICKA_OSOBY = ["ID", "Jméno", "Stav", "Otisk klíče", "Token schválení", "Založeno"];
 const O = { id: 0, jmeno: 1, stav: 2, otisk: 3, token: 4, zalozeno: 5 };
@@ -40,8 +44,9 @@ function nastavit() {
   PropertiesService.getScriptProperties().setProperty("TABULKA_ID", tabulka.getId());
   osoby_();
   prihlasky_();
+  const adresa = adresaSpravce_();
   MailApp.sendEmail({
-    to: Session.getEffectiveUser().getEmail(),
+    to: adresa,
     subject: "Roadbook: přihlášky jsou připravené",
     body:
       "Tohle je zkušební e-mail. Přesně sem ti budou chodit nové osoby ke schválení.\n\n" +
@@ -49,6 +54,36 @@ function nastavit() {
       "(Spustit jako: Já, Přístup: Kdokoli) a adresu /exec vlož do webu.",
     name: "Roadbook",
   });
+  console.log("Zkušební e-mail odeslán na " + adresa);
+}
+
+/* ── Spusť z editoru, když nepřišel e-mail: pošle ho znovu za každou
+      osobu, která čeká na schválení, a v protokolu ukáže, na jakou adresu. */
+function poslatZnovu() {
+  const osoby = osoby_().getDataRange().getValues().slice(1);
+  const prihlasky = prihlasky_().getDataRange().getValues().slice(1);
+  const urlTabulky = tabulka_().getUrl();
+  let pocet = 0;
+  osoby.forEach((r) => {
+    if (stav_(r[O.stav]) !== "ceka") return;
+    const posledni = prihlasky.filter((x) => String(x[P.osoba]) === String(r[O.id])).pop();
+    const p = { jmeno: String(r[O.jmeno]), zavod: "", ucast: "", trasa: "", tempo: "", odvoz: "", komentar: "" };
+    if (posledni) {
+      Object.assign(p, {
+        zavod: String(posledni[P.zavod]),
+        ucast: String(posledni[P.ucast]) === "mozna" ? "mozna" : "jede",
+        trasa: String(posledni[P.trasa]),
+        tempo: String(posledni[P.tempo]),
+        odvoz: String(posledni[P.odvoz]),
+        komentar: String(posledni[P.komentar]),
+      });
+    }
+    posliEmail_({ id: String(r[O.id]), token: String(r[O.token]) }, p, urlTabulky);
+    pocet++;
+  });
+  console.log(pocet
+    ? "Odesláno e-mailů: " + pocet + ", na adresu " + adresaSpravce_()
+    : "Nikdo nečeká na schválení, nebylo co poslat.");
 }
 
 /* ── Web: GET ───────────────────────────────────────────────────────── */
@@ -124,7 +159,15 @@ function ulozit_(data) {
   } finally {
     zamek.releaseLock();
   }
-  if (nova) posliEmail_(osoba, p, prihlasky.getParent().getUrl());
+  if (nova) {
+    // přihláška už je uložená; když e-mail selže (třeba denní limit),
+    // chyba je v editoru vlevo v „Spuštění“ a osobu jde schválit i ručně v tabulce
+    try {
+      posliEmail_(osoba, p, prihlasky.getParent().getUrl());
+    } catch (err) {
+      console.error("E-mail ke schválení se nepodařilo odeslat: " + err);
+    }
+  }
   return json_({ ok: true, klic: klic, stav: osoba.stav });
 }
 
@@ -210,7 +253,7 @@ function posliEmail_(osoba, p, urlTabulky) {
   const udaje = [
     ["Jméno", p.jmeno],
     ["Závod", p.zavod],
-    ["Účast", UCAST[p.ucast]],
+    ["Účast", UCAST[p.ucast] || ""],
     ["Trasa", p.trasa],
     ["Tempo", p.tempo],
     ["Odvoz", ODVOZ[p.odvoz] || ""],
@@ -228,8 +271,8 @@ function posliEmail_(osoba, p, urlTabulky) {
     text + "</a>";
 
   MailApp.sendEmail({
-    to: Session.getEffectiveUser().getEmail(),
-    subject: "Nová osoba ke schválení: " + p.jmeno + " – " + p.zavod,
+    to: adresaSpravce_(),
+    subject: "Nová osoba ke schválení: " + p.jmeno + (p.zavod ? " – " + p.zavod : ""),
     name: "Roadbook",
     body:
       udaje.map((r) => r[0] + ": " + r[1]).join("\n") +
@@ -251,6 +294,10 @@ function posliEmail_(osoba, p, urlTabulky) {
 }
 
 /* ── Pomocné funkce ─────────────────────────────────────────────────── */
+function adresaSpravce_() {
+  return EMAIL_SPRAVCE.trim() || Session.getEffectiveUser().getEmail();
+}
+
 function tabulka_() {
   const aktivni = SpreadsheetApp.getActiveSpreadsheet();
   if (aktivni) return aktivni;

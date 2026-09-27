@@ -216,6 +216,23 @@ V tabulce jsou dva listy:
 - **Přihlášky** — jedna řádka na osobu a závod (jede / možná, trasa,
   tempo, odvoz, komentář).
 
+### Když e-mail nepřišel
+
+Přihláška se uloží vždy, i když e-mail selže. Osoba pak jen čeká
+v listu „Osoby".
+
+- E-mail jde na **Google účet, pod kterým skript běží**, tedy na vlastníka
+  tabulky. Kdo má víc účtů, ať zkontroluje ten, pod kterým tabulku založil
+  (ikona účtu vpravo nahoře v editoru skriptu). Hledej v Gmailu
+  „Roadbook" i ve spamu a v záložkách Aktualizace a Promo akce.
+- V editoru skriptu vyber funkci **`poslatZnovu`** a *▶ Spustit*. Pošle
+  e-mail znovu za každou osobu, která čeká, a v *Protokolu provádění*
+  ukáže, na jakou adresu odešel.
+- E-maily jinam: nahoře ve skriptu vyplň `EMAIL_SPRAVCE` a nasaď novou
+  verzi (viz níže).
+- Chyby odesílání jsou v editoru vlevo v **Spuštění** (u běhu `doPost`).
+- Schválit jde i bez e-mailu: v listu „Osoby" přepiš Stav na `ano`.
+
 ### Co je veřejné a jak je to chráněné
 
 - Web dostane **jen přihlášky schválených osob** a jen jméno, závod,
