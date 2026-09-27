@@ -356,7 +356,7 @@ function jakoText_(s) {
 }
 
 function normalizuj_(s) {
-  return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+  return String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
 function esc_(s) {
