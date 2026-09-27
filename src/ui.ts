@@ -52,3 +52,14 @@ export function profilZavodu(zavod: Zavod): ProfilZavodu | null {
 export function klicMesice(zavod: Zavod): string {
   return zavod.datum ? zavod.datum.slice(0, 7) : (zavod.odhadMesic ?? "");
 }
+
+/** Řazení podle měsíce a data; závody bez termínu jdou na konec svého měsíce. */
+export function porovnejZavody(a: Zavod, b: Zavod): number {
+  const ka = klicMesice(a);
+  const kb = klicMesice(b);
+  if (ka !== kb) return ka < kb ? -1 : 1;
+  if (!a.datum && !b.datum) return 0;
+  if (!a.datum) return 1;
+  if (!b.datum) return -1;
+  return a.datum < b.datum ? -1 : 1;
+}

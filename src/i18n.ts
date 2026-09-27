@@ -44,6 +44,8 @@ export interface Texty {
   oficialniWeb: string;
   odkazNedoplnen: string;
   zdroj: string;
+  odkazPrihlasky: string;
+  kdoJede: string;
 }
 
 const CS: Texty = {
@@ -102,6 +104,8 @@ const CS: Texty = {
   oficialniWeb: "Oficiální web →",
   odkazNedoplnen: "odkaz nedoplněn",
   zdroj: "zdroj:",
+  odkazPrihlasky: "Kdo jede na který závod? Přihlášky (v němčině) →",
+  kdoJede: "Přihlásit se · kdo jede →",
 };
 
 const DE: Texty = {
@@ -162,6 +166,8 @@ const DE: Texty = {
   oficialniWeb: "Offizielle Website →",
   odkazNedoplnen: "kein Link hinterlegt",
   zdroj: "Quelle:",
+  odkazPrihlasky: "Wer fährt mit? Zu den Anmeldungen →",
+  kdoJede: "Anmelden · wer fährt mit →",
 };
 
 export const TEXTY: Record<Jazyk, Texty> = { cs: CS, de: DE };

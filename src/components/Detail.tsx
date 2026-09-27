@@ -1,6 +1,7 @@
 import type { Zavod } from "../types";
 import { profilTrasy } from "../ui";
 import { useTexty } from "../i18n";
+import { PRIHLASKY_ZAPNUTE, dnesniDatum, jeBudouci } from "../prihlasky";
 
 export function Detail({ zavod }: { zavod: Zavod }) {
   const t = useTexty();
@@ -75,6 +76,11 @@ export function Detail({ zavod }: { zavod: Zavod }) {
           </a>
         ) : (
           <span className="detail-bez-webu">{t.odkazNedoplnen}</span>
+        )}
+        {PRIHLASKY_ZAPNUTE && jeBudouci(zavod, dnesniDatum()) && (
+          <a className="detail-odkaz" href={`#mitfahren/${zavod.id}`}>
+            {t.kdoJede}
+          </a>
         )}
         <span className="detail-zdroj">
           {t.zdroj} {zavod.zdroj}

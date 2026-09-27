@@ -762,6 +762,175 @@ a:focus-visible {
   line-height: 1.6;
 }
 
+/* ── Přihlášky („Wer fährt mit?") ─────────────────────────── */
+
+.odkaz-prihlasky {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--akcent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--akcent-plocha);
+}
+
+.odkaz-prihlasky:hover {
+  border-bottom-color: var(--akcent);
+}
+
+.detail-odkaz {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--akcent);
+  text-decoration: none;
+}
+
+.detail-odkaz:hover {
+  text-decoration: underline;
+}
+
+.zpet {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-slaby);
+  text-decoration: none;
+}
+
+.zpet:hover {
+  color: var(--text);
+}
+
+.pr-zavod {
+  border-bottom: 1px solid var(--linka);
+}
+
+.pr-zavod:last-child {
+  border-bottom: none;
+}
+
+.pr-zavod--cil {
+  background: var(--plocha-akcent);
+}
+
+.pr-hlava {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+  padding: var(--mezera-3) 18px;
+}
+
+.pr-akce {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.pr-pocet {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-slaby);
+  white-space: nowrap;
+}
+
+.pr-tlacitko {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--akcent);
+  padding: 8px 13px;
+  border-radius: var(--radius-pilulka);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.pr-tlacitko:hover {
+  background: var(--akcent-tmavy);
+}
+
+.pr-seznam {
+  list-style: none;
+  margin: 0;
+  padding: 0 18px var(--mezera-3) 80px;
+}
+
+.pr-ucastnik {
+  padding: 9px 0;
+  border-top: 1px dashed var(--linka);
+}
+
+.pr-radek {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.pr-jmeno {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.pr-udaje {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-tlum);
+}
+
+.pr-odvoz {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-male);
+  color: var(--text-slaby);
+  background: var(--pozadi);
+  border: 1px solid var(--linka-vyrazna);
+}
+
+.pr-odvoz--nabizi {
+  color: var(--profil-rovina);
+  background: var(--akcent-plocha);
+  border-color: transparent;
+}
+
+.pr-odvoz--hleda {
+  color: var(--profil-zvlnena);
+  background: #fbf3e2;
+  border-color: transparent;
+}
+
+.pr-komentar {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-tlum);
+  white-space: pre-line;
+}
+
+.pr-chyba {
+  margin-top: 8px !important;
+  font-family: var(--mono);
+  font-size: 11px !important;
+  color: var(--text-slaby) !important;
+}
+
+.prazdno .prepinac {
+  margin-top: 16px;
+}
+
 /* ── Úzké displeje (375 px) ──────────────────────────────── */
 
 @media (max-width: 480px) {
@@ -810,6 +979,21 @@ a:focus-visible {
 
   .radek-datum {
     width: 34px;
+  }
+
+  .pr-hlava {
+    gap: 11px;
+    padding: var(--mezera-3) 12px;
+  }
+
+  .pr-akce {
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 45px;
+  }
+
+  .pr-seznam {
+    padding: 0 12px var(--mezera-3) 57px;
   }
 
   .radek-den {

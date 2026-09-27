@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Zavod, Zeme } from "./types";
 import { ZAVODY } from "./data/zavody";
-import { PROFILY, klicMesice } from "./ui";
+import { PROFILY, klicMesice, porovnejZavody } from "./ui";
+import { PRIHLASKY_ZAPNUTE } from "./prihlasky";
 import {
   NAZVY_JAZYKU,
   TEXTY,
@@ -13,6 +14,7 @@ import {
 } from "./i18n";
 import { Radek } from "./components/Radek";
 import { Mrizka } from "./components/Mrizka";
+import { Prihlasky } from "./components/Prihlasky";
 
 const SEZONY = ["2026", "2027"];
 const JAZYKY: Jazyk[] = ["cs", "de"];
@@ -27,7 +29,17 @@ function zavodZHash(): Zavod | null {
 
 const ZAVOD_Z_URL = zavodZHash();
 
+/* Vedlejší stránka s přihláškami: #mitfahren, případně #mitfahren/<id>. */
+type Stranka = { typ: "kalendar" } | { typ: "prihlasky"; zavod: string | null };
+
+function strankaZHash(): Stranka {
+  const shoda = window.location.hash.match(/^#mitfahren(?:\/(.+))?$/);
+  if (!shoda) return { typ: "kalendar" };
+  return { typ: "prihlasky", zavod: shoda[1] ? decodeURIComponent(shoda[1]) : null };
+}
+
 export default function App() {
+  const [stranka, setStranka] = useState<Stranka>(strankaZHash);
   const [jazyk, setJazyk] = useState<Jazyk>(vychoziJazyk);
   const [sezona, setSezona] = useState(
     ZAVOD_Z_URL ? klicMesice(ZAVOD_Z_URL).slice(0, 4) : "2027",
@@ -44,10 +56,35 @@ export default function App() {
     }
   }, []);
 
+  /* Změna hashe (odkaz, tlačítko Zpět, ručně vložená adresa) přepne stránku,
+     případně otevře závod z #zavod/<id>. */
   useEffect(() => {
-    document.documentElement.lang = t.htmlLang;
-    document.title = t.titulekStranky;
-  }, [t]);
+    function priZmeneHashe() {
+      const nova = strankaZHash();
+      setStranka(nova);
+      const zavod = nova.typ === "kalendar" ? zavodZHash() : null;
+      if (zavod) {
+        setSezona(klicMesice(zavod).slice(0, 4));
+        setZeme("vse");
+        setPohled("seznam");
+        setOtevreny(zavod.id);
+        requestAnimationFrame(() =>
+          document.getElementById(`zavod-${zavod.id}`)?.scrollIntoView(),
+        );
+      } else if (nova.typ === "kalendar" || !nova.zavod) {
+        window.scrollTo(0, 0);
+      }
+    }
+    window.addEventListener("hashchange", priZmeneHashe);
+    return () => window.removeEventListener("hashchange", priZmeneHashe);
+  }, []);
+
+  useEffect(() => {
+    // stránka s přihláškami je jen německy
+    const naPrihlaskach = stranka.typ === "prihlasky";
+    document.documentElement.lang = naPrihlaskach ? "de" : t.htmlLang;
+    document.title = naPrihlaskach ? "Wer fährt mit? — Roadbook" : t.titulekStranky;
+  }, [t, stranka]);
 
   function zmenJazyk(novy: Jazyk) {
     setJazyk(novy);
@@ -66,16 +103,7 @@ export default function App() {
     return zavody
       .filter((z) => klicMesice(z).startsWith(sezona))
       .filter((z) => zeme === "vse" || z.zeme === zeme)
-      .sort((a, b) => {
-        const ka = klicMesice(a);
-        const kb = klicMesice(b);
-        if (ka !== kb) return ka < kb ? -1 : 1;
-        // závody bez termínu patří na konec svého odhadovaného měsíce
-        if (!a.datum && !b.datum) return 0;
-        if (!a.datum) return 1;
-        if (!b.datum) return -1;
-        return a.datum < b.datum ? -1 : 1;
-      });
+      .sort(porovnejZavody);
   }, [zavody, sezona, zeme]);
 
   const mesice = useMemo(() => {
@@ -98,6 +126,10 @@ export default function App() {
     [sezona],
   );
   const volbyZeme: (Zeme | "vse")[] = ["vse", ...dostupneZeme];
+
+  if (stranka.typ === "prihlasky") {
+    return <Prihlasky cilovyZavod={stranka.zavod} />;
+  }
 
   return (
     <TextyContext.Provider value={t}>
@@ -125,6 +157,11 @@ export default function App() {
             <span className="tlumene">{t.nadpis2}</span>
           </h1>
           <p>{t.popis}</p>
+          {PRIHLASKY_ZAPNUTE && (
+            <a className="odkaz-prihlasky" href="#mitfahren">
+              {t.odkazPrihlasky}
+            </a>
+          )}
         </header>
 
         <div className="ovladani">
