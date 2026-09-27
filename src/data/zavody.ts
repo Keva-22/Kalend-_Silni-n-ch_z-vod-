@@ -48,21 +48,30 @@ export const ZAVODY: Zavod[] = [
     id: "carinthia200-2026", nazev: "Carinthia200",
     misto: "Villach", region: "Kärnten", zeme: "AT",
     datum: "2026-09-20", overeno: "ok", serie: null,
-    trasy: [{ nazev: "Mittel", km: 105, hm: 1304 }],
+    // Oprava: dřívější údaj "Mittel 105 km / 1304 hm" neodpovídá žádné
+    // vypsané trase. Pořadatel uvádí tři trasy; zdroj: carinthia200.com
+    trasy: [
+      { nazev: "125 km", km: 125, hm: 1575 },  // [uncertain]
+      { nazev: "155 km", km: 155, hm: 2630 },  // [uncertain]
+      { nazev: "200 km", km: 200, hm: 3285 },  // [uncertain]
+    ],
     uzavirky: "nezname", startovne: null,
     web: null, zdroj: "pořadatel",
 
     /* ── rozšířená pole ── */
-    distanceKm: 105,
-    elevationM: 1304,
-    profile: "hilly",  // [uncertain] odvozeno z hm/km = 12.4
+    distanceKm: 200,   // [uncertain] nejdelší ze 3 tras
+    elevationM: 3285,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 16.4
     startLocation: { city: "Villach", country: "AT" },
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
   },
   {
     id: "letape-rovinata-2026", nazev: "L'Etape Czech Republic — Rovinatá etapa",
     misto: "Pardubice", region: "Pardubický kraj", zeme: "CZ",
-    datum: "2026-10-04", overeno: "ok", serie: "L'Etape by Tour de France",
+    // POZOR: prameny se rozcházejí — stránka pořadatele je nadepsaná
+    // "Rovinatá etapa 3. 10. 2026" (sobota), jiné zdroje uvádějí 4. 10.
+    // Ponechán původní údaj, overeno sníženo na "check" k ověření.
+    datum: "2026-10-04", overeno: "check", serie: "L'Etape by Tour de France",  // [uncertain]
     trasy: [{ nazev: "Hlavní trasa", km: 111, hm: 300 }],
     uzavirky: "plna",
     startovne: "1 990 Kč v předprodeji → 3 690 Kč",
@@ -76,7 +85,7 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "Pardubice", country: "CZ" },
     entryFee: "1 990 Kč v předprodeji → 3 690 Kč",
     series: "L'Etape by Tour de France",
-    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    status: "provisional",  // [uncertain] termín se mezi zdroji rozchází
     sourceUrl: "https://www.letapeczech.cz",  // [uncertain] zdroj "letapeczech.cz" odpovídá doméně webu
   },
 
@@ -339,6 +348,28 @@ export const ZAVODY: Zavod[] = [
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
   },
   {
+    id: "sauwald-2027", nazev: "SauwaldGiro",
+    misto: "Sauwald", region: "Oberösterreich", zeme: "AT",
+    datum: null, odhadMesic: "2027-08", overeno: "tbc", serie: null,
+    // km/hm dle sauwaldgiro.at; zdroj značí trasy jako Route A / Route B
+    trasy: [
+      { nazev: "Runde A", km: 105, hm: 1600 },  // [uncertain]
+      { nazev: "Runde B", km: 61, hm: 900 },    // [uncertain]
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.sauwaldgiro.at",
+    zdroj: "sauwaldgiro.at / radmarathon.at (vyhledávání 27. 9. 2026); termín 2027 zatím nevyhlášen",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 105,   // [uncertain] delší ze 2 tras
+    elevationM: 1600,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.2
+    // pořadatel uvádí jako místo startu St. Roman bei Schärding v Innviertelu
+    startLocation: { city: "St. Roman bei Schärding", country: "AT" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    sourceUrl: "https://www.sauwaldgiro.at",  // [uncertain] domovská stránka pořadatele
+  },
+  {
     id: "kufstein-2027", nazev: "Kufsteinerland Radmarathon",
     misto: "Kufstein", region: "Tirol", zeme: "AT",
     datum: null, odhadMesic: "2027-08", overeno: "tbc",
@@ -364,31 +395,37 @@ export const ZAVODY: Zavod[] = [
   {
     id: "oetztaler-2027", nazev: "Ötztaler Radmarathon",
     misto: "Sölden", region: "Tirol", zeme: "AT",
-    datum: null, odhadMesic: "2027-08", overeno: "tbc", serie: null,
+    datum: "2027-08-29", overeno: "check", serie: null,
     trasy: [{ nazev: "Marathon", km: 227, hm: 5500 }],
     uzavirky: "nezname", startovne: null,
     web: "https://www.oetztaler-radmarathon.com",
-    zdroj: "trasa dle ročníku 2026",
+    zdroj: "termín: central-soelden.com + intervalcoach.app (vyhledávání 27. 9. 2026); trasa dle ročníku 2026",
 
     /* ── rozšířená pole ── */
     distanceKm: 227,
     elevationM: 5500,
     profile: "mountain",  // [uncertain] odvozeno z hm/km = 24.2
     startLocation: { city: "Sölden", country: "AT" },
-    status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
   },
   {
     id: "carinthia200-2027", nazev: "Carinthia200",
     misto: "Villach", region: "Kärnten", zeme: "AT",
     datum: null, odhadMesic: "2027-09", overeno: "tbc", serie: null,
-    trasy: [{ nazev: "Mittel", km: 105, hm: 1304 }],
+    // Oprava: dřívější údaj "Mittel 105 km / 1304 hm" neodpovídá žádné
+    // vypsané trase. Pořadatel uvádí tři trasy; zdroj: carinthia200.com
+    trasy: [
+      { nazev: "125 km", km: 125, hm: 1575 },  // [uncertain]
+      { nazev: "155 km", km: 155, hm: 2630 },  // [uncertain]
+      { nazev: "200 km", km: 200, hm: 3285 },  // [uncertain]
+    ],
     uzavirky: "nezname", startovne: null,
     web: null, zdroj: "ročník 2026 pro orientaci",
 
     /* ── rozšířená pole ── */
-    distanceKm: 105,
-    elevationM: 1304,
-    profile: "hilly",  // [uncertain] odvozeno z hm/km = 12.4
+    distanceKm: 200,   // [uncertain] nejdelší ze 3 tras
+    elevationM: 3285,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 16.4
     startLocation: { city: "Villach", country: "AT" },
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
   },
