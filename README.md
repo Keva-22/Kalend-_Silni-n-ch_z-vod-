@@ -153,93 +153,66 @@ v německé verzi objeví česky.
 
 ## Přihlášky („Wer fährt mit?")
 
-Vedlejší stránka `#mitfahren` (jen německy): návštěvník se přihlásí na
-závod, může připsat trasu, tempo a jestli má nebo hledá odvoz. Nic se
-nezobrazí hned — nejdřív ti přijde e-mail, přihlášku schválíš a teprve
-pak ji uvidí všichni.
+Vedlejší stránka `#mitfahren` (jen německy): návštěvník se u závodu
+přihlásí formulářem přímo na webu — jméno, trasa, tempo, jestli má nebo
+hledá odvoz, komentář. Nic se nezobrazí hned: nejdřív ti přijde e-mail
+s tlačítky **Schválit / Zamítnout** a teprve po schválení přihlášku uvidí
+všichni.
 
-Jak to funguje: přihláška jde do **Google Formuláře**, ten ti pošle
-e-mail a uloží ji do **Google Tabulky**. Schválené řádky se zkopírují na
-samostatný list, který je publikovaný jako CSV, a stránka čte jen ten.
-Server ani knihovna nejsou potřeba.
+Serverovou část obstarává **Google Apps Script** (`apps-script/prihlasky.gs`)
+připojený ke Google Tabulce, zdarma pod tvým účtem. Přihlášky ukládá do
+tabulky, posílá ti e-maily a webu vydává jen schválené. Web sám zůstává
+statický.
 
-Dokud nejsou v `src/data/prihlasky.ts` vyplněné obě adresy, je funkce
+Dokud je v `src/data/prihlasky.ts` prázdná `PRIHLASKY_URL`, je funkce
 vypnutá: odkazy se nezobrazují a `#mitfahren` jen oznámí, že ještě není
-spuštěná. Stránku si můžeš prohlédnout ručně na adrese `…/#mitfahren`.
+spuštěná.
 
-### Jednorázové nastavení (asi 15 minut)
+### Jednorázové nastavení (asi 5 minut)
 
-**1. Formulář.** Na [forms.google.com](https://forms.google.com) založ
-nový formulář (název třeba „Roadbook – Ich fahre mit"). Otázky pojmenuj
-**přesně takhle** — podle názvů stránka pozná sloupce:
+**1. Tabulka.** Otevři [sheets.new](https://sheets.new) — založí se nová
+Google Tabulka. Pojmenuj ji třeba „Roadbook – přihlášky".
 
-| Otázka | Typ | Povinná | Popis pod otázkou |
-|---|---|---|---|
-| `Name` | krátká odpověď | ano | Vorname und Initial reicht, z. B. Kevin H. |
-| `Rennen` | krátká odpověď | ano | (vyplní se samo z odkazu) |
-| `Strecke` | krátká odpověď | ne | z. B. Marathon 227 km |
-| `Tempo` | krátká odpověď | ne | z. B. 28–30 km/h oder gemütlich |
-| `Mitfahrgelegenheit` | výběr z možností | ne | viz níže |
-| `Kommentar` | odstavec | ne | z. B. wie man dich erreicht (Strava, Instagram) |
-| `Einverständnis` | zaškrtávací políčka | ano | viz níže |
+**2. Skript.** V tabulce *Rozšíření → Apps Script*. Smaž, co je v editoru,
+a vlož celý obsah souboru
+[`apps-script/prihlasky.gs`](https://github.com/Keva-22/Kalend-_Silni-n-ch_z-vod-/blob/claude/attached-documents-2jxd78/apps-script/prihlasky.gs)
+(na GitHubu tlačítko *Copy raw file*). Ulož (ikona diskety).
 
-U `Mitfahrgelegenheit` dej tyto možnosti (stránka z nich udělá barevné
-štítky „bietet / sucht Mitfahrt"):
-`Ich habe ein Auto und freie Plätze` · `Ich suche eine Mitfahrgelegenheit`
-· `Anreise ist geklärt`
+**3. Oprávnění a zkouška.** Nahoře vyber funkci `nastavit` a klikni
+*▶ Spustit*. Google chce oprávnění: *Zkontrolovat oprávnění* → tvůj účet →
+„Google tuto aplikaci neověřil" → *Rozšířené* → *Přejít na projekt* →
+*Povolit*. (Je to tvůj vlastní skript, proto ho Google neověřoval.) Přijde
+ti zkušební e-mail a v tabulce vznikne list „Přihlášky".
 
-U `Einverständnis` jediná volba: `Ich bin einverstanden, dass mein Name
-und meine Angaben nach Freigabe öffentlich auf der Seite erscheinen.`
+**4. Nasazení.** *Nasadit → Nové nasazení* → u „Vyberte typ" ozubené
+kolečko → *Webová aplikace*. Spustit jako: **Já**, kdo má přístup:
+**Kdokoli** → *Nasadit*. Zkopíruj *URL webové aplikace* (končí `/exec`).
 
-**2. E-mail.** Ve formuláři v záložce *Odpovědi* → ⋮ → *Dostávat
-e-mailová oznámení o nových odpovědích*.
-
-**3. Tabulka.** *Odpovědi* → *Propojit s Tabulkami* → nová tabulka. První
-list má sloupce A časová značka, B `Name` … H `Einverständnis`. Do buňky
-**I1** napiš `Freigegeben`.
-
-**4. Veřejný list.** Přidej nový list `Öffentlich` a do A1 vlož:
-
-```
-=QUERY('Odpovědi formuláře 1'!A:I; "select B, C, D, E, F, G where lower(I) = 'ja'"; 1)
-```
-
-Název prvního listu oprav podle skutečnosti (v němčině *Formularantworten
-1*, anglicky *Form Responses 1*); v anglickém rozhraní se místo středníků
-píšou čárky. Na tenhle list se dostanou jen schválené řádky, bez časové
-značky a souhlasu.
-
-**5. Publikovat.** *Soubor* → *Sdílet* → *Publikovat na webu* → vyber
-**jen list `Öffentlich`** a formát **CSV** → *Publikovat* → zkopíruj
-adresu. Nepublikuj celý dokument, jinak by šly přečíst i neschválené
-přihlášky.
-
-**6. Předvyplněný odkaz.** Ve formuláři ⋮ → *Získat předvyplněný odkaz*
-→ do pole `Rennen` napiš `RENNEN` (velkými) → *Získat odkaz* → zkopíruj.
-Stránka pak slovo RENNEN nahradí názvem závodu, u kterého návštěvník
-klikl na „Ich fahre mit".
-
-**7.** Obě adresy vlož do `src/data/prihlasky.ts` a spusť `npm run deploy`.
-Ve vývojovém režimu konzole upozorní, když adresa nevypadá správně.
+**5.** Adresu vlož do `src/data/prihlasky.ts` a spusť `npm run deploy`.
+Kontrola: adresa otevřená v prohlížeči ukáže
+`{"ok":true,"sluzba":"roadbook-prihlasky"}`.
 
 ### Schvalování
 
-Přijde e-mail → otevři tabulku → u přihlášky napiš do sloupce
-`Freigegeben` slovo `ja`. Na stránce se objeví do pár minut (Google
-publikovaná data obnovuje se zpožděním). Stáhnout ji můžeš smazáním `ja`.
+Každá přihláška ti přijde e-mailem se vším, co člověk vyplnil, a dvěma
+tlačítky **✓ Schválit** a **✕ Zamítnout**. Schválená se na webu objeví
+při dalším načtení stránky. Stav jde měnit i přímo v tabulce ve sloupci
+*Stav* (`schváleno` / `zamítnuto`, stačí i `ano`).
 
-### Na co si dát pozor
+### Co je veřejné a jak je to chráněné
 
-- **Na webu jsou jen schválené řádky** a jen sloupce Name, Rennen,
-  Strecke, Tempo, Mitfahrgelegenheit a Kommentar.
-- **Formulář nemá ochranu proti spamu.** Spam se bez schválení na web
-  nedostane, jen ti přijde e-mail.
-- **Když později do formuláře přidáš otázku,** Google vloží nový sloupec
-  a písmena ve vzorci na listu `Öffentlich` je potřeba posunout.
-- Přihláška se přiřadí k závodu podle id v závorce, které doplní
-  předvyplněný odkaz (`Ötztaler Radmarathon (oetztaler-2027)`), jinak
-  podle přesného názvu. Co se přiřadit nepodaří, zobrazí se dole jako
-  „Weitere Anmeldungen". Přihlášky k už odjetým závodům se nezobrazují.
+- Web dostane **jen schválené** přihlášky a jen závod, jméno, trasu,
+  tempo, odvoz a komentář. Neschválené vidíš jen ty v tabulce.
+- Odkazy Schválit / Zamítnout obsahují tajný token, bez e-mailu je nikdo
+  nepoužije.
+- Skryté pole jako past na roboty, nejvýš 60 přihlášek denně (Gmail smí
+  poslat 100 e-mailů denně), omezená délka polí. Text z formuláře se do
+  tabulky ukládá vždy jako text, nikdy jako vzorec.
+
+### Když se skript změní
+
+*Nasadit → Spravovat nasazení* → tužka → Verze: *Nová verze* → *Nasadit*.
+Adresa `/exec` zůstane stejná, na webu není potřeba nic měnit.
 
 ## Kontrola dat
 

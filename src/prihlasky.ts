@@ -1,165 +1,106 @@
-import type { Zavod } from "./types";
-import { FORMULAR_URL, TABULKA_CSV_URL } from "./data/prihlasky";
+import { PRIHLASKY_URL } from "./data/prihlasky";
 
 /* Přihlášky na závody („Wer fährt mit?").
-   Přihlášku odešle návštěvník Google Formulářem; správce dostane e-mail
-   a v Google Tabulce ji schválí. Stránka čte jen publikovanou záložku se
-   schválenými řádky (CSV). Serverová část ani knihovna tu není. */
+   Formulář je přímo na webu; přihlášku přijme Google Apps Script
+   (apps-script/prihlasky.gs), uloží ji do tabulky a pošle správci e-mail
+   se schválením. Web čte jen schválené přihlášky. */
 
-export const PRIHLASKY_ZAPNUTE = FORMULAR_URL !== "" && TABULKA_CSV_URL !== "";
+export const PRIHLASKY_ZAPNUTE = PRIHLASKY_URL !== "";
 
 if (import.meta.env.DEV) {
   if (!PRIHLASKY_ZAPNUTE) {
-    console.info(
-      "Přihlášky jsou vypnuté: doplň FORMULAR_URL a TABULKA_CSV_URL v src/data/prihlasky.ts (návod v README).",
-    );
-  } else {
-    if (!FORMULAR_URL.includes("RENNEN")) {
-      console.warn("Přihlášky: FORMULAR_URL neobsahuje RENNEN, závod se do formuláře nepředvyplní.");
-    }
-    if (!TABULKA_CSV_URL.includes("output=csv")) {
-      console.warn("Přihlášky: TABULKA_CSV_URL nevypadá jako publikované CSV (chybí output=csv).");
-    }
+    console.info("Přihlášky jsou vypnuté: doplň PRIHLASKY_URL v src/data/prihlasky.ts (návod v README).");
+  } else if (!/\/exec$/.test(PRIHLASKY_URL) && !PRIHLASKY_URL.startsWith("http://localhost")) {
+    console.warn("Přihlášky: PRIHLASKY_URL by měla končit na /exec (adresa nasazené webové aplikace).");
   }
 }
 
 export type Odvoz = "nabizi" | "hleda" | "vyreseno";
+const ODVOZY: readonly string[] = ["nabizi", "hleda", "vyreseno"];
 
+/** Schválená přihláška, jak ji vydá server. */
 export interface Prihlaska {
+  zavodId: string;
+  zavod: string;
   jmeno: string;
-  zavodText: string;      // jak ho vyplnil formulář
-  zavodId: string | null; // null = nepodařilo se přiřadit k závodu v kalendáři
   trasa: string;
   tempo: string;
   odvoz: Odvoz | null;
-  odvozText: string;
   komentar: string;
 }
 
-/** Rozdělí CSV na řádky a buňky; zvládá uvozovky, "" uvnitř a zalomení v buňce. */
-export function parsujCsv(text: string): string[][] {
-  const radky: string[][] = [];
-  let radek: string[] = [];
-  let bunka = "";
-  let vUvozovkach = false;
-  const t = text.replace(/^﻿/, "");
+/** Nová přihláška z formuláře. `web` je past na roboty — člověk ji nechá prázdnou. */
+export interface NovaPrihlaska {
+  zavodId: string;
+  zavod: string;
+  jmeno: string;
+  trasa: string;
+  tempo: string;
+  odvoz: Odvoz | "";
+  komentar: string;
+  souhlas: boolean;
+  web: string;
+}
 
-  for (let i = 0; i < t.length; i++) {
-    const z = t[i];
-    if (vUvozovkach) {
-      if (z === '"' && t[i + 1] === '"') {
-        bunka += '"';
-        i++;
-      } else if (z === '"') {
-        vUvozovkach = false;
-      } else {
-        bunka += z;
-      }
-    } else if (z === '"') {
-      vUvozovkach = true;
-    } else if (z === ",") {
-      radek.push(bunka);
-      bunka = "";
-    } else if (z === "\n" || z === "\r") {
-      if (z === "\r" && t[i + 1] === "\n") i++;
-      radek.push(bunka);
-      radky.push(radek);
-      radek = [];
-      bunka = "";
-    } else {
-      bunka += z;
-    }
+export type KodChyby = "souhlas" | "neplatne" | "limit" | "sit";
+
+export class ChybaPrihlasky extends Error {
+  kod: KodChyby;
+  constructor(kod: KodChyby) {
+    super(kod);
+    this.kod = kod;
   }
-  if (bunka !== "" || radek.length > 0) {
-    radek.push(bunka);
-    radky.push(radek);
-  }
-  return radky;
 }
 
-/* Sloupce se hledají podle začátku nadpisu (= názvu otázky ve formuláři),
-   takže na pořadí sloupců v tabulce nezáleží. */
-const SLOUPCE = {
-  jmeno: ["name"],
-  zavod: ["rennen"],
-  trasa: ["strecke"],
-  tempo: ["tempo"],
-  odvoz: ["mitfahr"],
-  komentar: ["kommentar", "bemerkung"],
-} as const;
-
-function najdiSloupec(hlavicka: string[], zacatky: readonly string[]): number {
-  return hlavicka.findIndex((h) => {
-    const n = h.trim().toLowerCase();
-    return zacatky.some((z) => n.startsWith(z));
-  });
+function text(v: unknown): string {
+  return typeof v === "string" ? v : v == null ? "" : String(v);
 }
 
-function rozpoznejOdvoz(text: string): Odvoz | null {
-  const n = text.toLowerCase();
-  if (n.includes("suche")) return "hleda";
-  if (n.includes("freie") || n.includes("biete") || n.includes("plätze")) return "nabizi";
-  if (n.includes("geklärt") || n.includes("versorgt")) return "vyreseno";
-  return null;
-}
-
-/** Závod z textu formuláře: podle id v závorce na konci, jinak podle názvu. */
-function prirad(text: string, zavody: Zavod[]): string | null {
-  const id = text.match(/\(([a-z0-9-]+)\)\s*$/i)?.[1]?.toLowerCase();
-  if (id && zavody.some((z) => z.id === id)) return id;
-  const nazev = text.trim().toLowerCase();
-  return zavody.find((z) => z.nazev.toLowerCase() === nazev)?.id ?? null;
-}
-
-/** Schválené přihlášky z CSV. Chyba = tabulka má jiný tvar, než čekáme. */
-export function nactiPrihlasky(csv: string, zavody: Zavod[]): Prihlaska[] {
-  const radky = parsujCsv(csv).filter((r) => r.some((b) => b.trim() !== ""));
-  if (radky.length === 0) return [];
-
-  const [hlavicka, ...data] = radky;
-  const iJmeno = najdiSloupec(hlavicka, SLOUPCE.jmeno);
-  const iZavod = najdiSloupec(hlavicka, SLOUPCE.zavod);
-
-  if (iJmeno < 0 || iZavod < 0) {
-    // Dotaz QUERY bez výsledků vrací místo tabulky jen chybovou hodnotu (#N/A)
-    const bunky = radky.flat().filter((b) => b.trim() !== "");
-    if (bunky.every((b) => b.trim().startsWith("#"))) return [];
-    throw new Error("Tabelle hat unerwartetes Format: Spalten „Name“ und „Rennen“ fehlen.");
-  }
-
-  const iTrasa = najdiSloupec(hlavicka, SLOUPCE.trasa);
-  const iTempo = najdiSloupec(hlavicka, SLOUPCE.tempo);
-  const iOdvoz = najdiSloupec(hlavicka, SLOUPCE.odvoz);
-  const iKomentar = najdiSloupec(hlavicka, SLOUPCE.komentar);
-  const bunka = (r: string[], i: number) => (i >= 0 ? (r[i] ?? "").trim() : "");
-
-  return data
-    .map((r): Prihlaska => {
-      const odvozText = bunka(r, iOdvoz);
-      const zavodText = bunka(r, iZavod);
+/** Přihlášky z odpovědi serveru; cokoli nečekaného se zahodí. */
+export function nactiPrihlasky(odpoved: unknown): Prihlaska[] {
+  const seznam = (odpoved as { prihlasky?: unknown } | null)?.prihlasky;
+  if (!Array.isArray(seznam)) throw new Error("Unerwartete Antwort vom Server.");
+  return seznam
+    .map((r: Record<string, unknown>): Prihlaska => {
+      const odvoz = text(r?.odvoz);
       return {
-        jmeno: bunka(r, iJmeno),
-        zavodText,
-        zavodId: prirad(zavodText, zavody),
-        trasa: bunka(r, iTrasa),
-        tempo: bunka(r, iTempo),
-        odvoz: rozpoznejOdvoz(odvozText),
-        odvozText,
-        komentar: bunka(r, iKomentar),
+        zavodId: text(r?.zavodId),
+        zavod: text(r?.zavod),
+        jmeno: text(r?.jmeno),
+        trasa: text(r?.trasa),
+        tempo: text(r?.tempo),
+        odvoz: ODVOZY.includes(odvoz) ? (odvoz as Odvoz) : null,
+        komentar: text(r?.komentar),
       };
     })
-    .filter((p) => p.jmeno !== "" && !p.jmeno.startsWith("#") && p.zavodText !== "");
+    .filter((p) => p.jmeno !== "" && p.zavodId !== "");
 }
 
-export async function stahniPrihlasky(zavody: Zavod[]): Promise<Prihlaska[]> {
-  const odpoved = await fetch(TABULKA_CSV_URL);
+export async function stahniPrihlasky(): Promise<Prihlaska[]> {
+  const odpoved = await fetch(`${PRIHLASKY_URL}?akce=seznam`);
   if (!odpoved.ok) throw new Error(`HTTP ${odpoved.status}`);
-  return nactiPrihlasky(await odpoved.text(), zavody);
+  return nactiPrihlasky(await odpoved.json());
 }
 
-/** Odkaz na formulář s předvyplněným závodem ("Název (id)"). */
-export function odkazNaFormular(z: Zavod): string {
-  return FORMULAR_URL.replace("RENNEN", encodeURIComponent(`${z.nazev} (${z.id})`));
+/* text/plain = „jednoduchý" požadavek bez CORS preflightu, který Apps Script
+   neumí obsloužit; tělo je přesto JSON. */
+export async function odesliPrihlasku(p: NovaPrihlaska): Promise<void> {
+  let data: { ok?: unknown; chyba?: unknown };
+  try {
+    const odpoved = await fetch(PRIHLASKY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(p),
+    });
+    data = await odpoved.json();
+  } catch {
+    throw new ChybaPrihlasky("sit");
+  }
+  if (data.ok === true) return;
+  const kod = text(data.chyba);
+  throw new ChybaPrihlasky(
+    kod === "souhlas" || kod === "neplatne" || kod === "limit" ? kod : "sit",
+  );
 }
 
 /** Dnešní datum 'YYYY-MM-DD' v místním čase. */
@@ -170,7 +111,7 @@ export function dnesniDatum(): string {
 }
 
 /** Závod, který se teprve pojede (u TBC podle odhadovaného měsíce). */
-export function jeBudouci(z: Zavod, dnes: string): boolean {
+export function jeBudouci(z: { datum: string | null; odhadMesic?: string }, dnes: string): boolean {
   if (z.datum) return z.datum >= dnes;
   return (z.odhadMesic ?? "") >= dnes.slice(0, 7);
 }

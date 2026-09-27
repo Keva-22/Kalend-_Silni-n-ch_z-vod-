@@ -931,6 +931,137 @@ a:focus-visible {
   margin-top: 16px;
 }
 
+button.pr-tlacitko {
+  border: none;
+  cursor: pointer;
+}
+
+.pr-tlacitko--otevrene,
+.pr-tlacitko--otevrene:hover {
+  background: var(--text-tlum);
+}
+
+.pr-tlacitko:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* formulář přihlášky */
+.pr-formular {
+  display: grid;
+  gap: 14px;
+  margin: 0 18px var(--mezera-3) 80px;
+  padding: 16px;
+  background: var(--plocha-tlum);
+  border: 1px solid var(--linka);
+  border-radius: var(--radius-male);
+}
+
+.pr-formular--hotovo {
+  display: block;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--akcent-plocha);
+  border-color: transparent;
+}
+
+.pr-pole {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.pr-pole > label,
+.pr-pole > legend {
+  padding: 0;
+  margin-bottom: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-slaby);
+}
+
+.pr-pole input:not([type="radio"]):not([type="checkbox"]),
+.pr-pole select,
+.pr-pole textarea {
+  width: 100%;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--plocha);
+  border: 1px solid var(--linka-vyrazna);
+  border-radius: var(--radius-male);
+}
+
+.pr-pole textarea {
+  resize: vertical;
+}
+
+.pr-pole input:not([type="radio"]):not([type="checkbox"]):focus-visible,
+.pr-pole select:focus-visible,
+.pr-pole textarea:focus-visible,
+.pr-volba input:focus-visible {
+  outline: 2px solid var(--akcent);
+  outline-offset: 1px;
+}
+
+.pr-radek-poli {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pr-volby {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+}
+
+.pr-volba {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.pr-volba input {
+  margin: 2px 0 0;
+  accent-color: var(--akcent);
+}
+
+.pr-souhlas {
+  font-size: 12.5px;
+  color: var(--text-tlum);
+}
+
+.pr-formular-chyba {
+  margin: 0;
+  font-size: 13px;
+  color: var(--profil-horska);
+}
+
+.pr-formular .pr-tlacitko {
+  justify-self: start;
+}
+
+/* past na roboty: mimo obrazovku, ne display:none (to by roboti poznali) */
+.pr-past {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* ── Úzké displeje (375 px) ──────────────────────────────── */
 
 @media (max-width: 480px) {
@@ -994,6 +1125,25 @@ a:focus-visible {
 
   .pr-seznam {
     padding: 0 12px var(--mezera-3) 57px;
+  }
+
+  .pr-formular {
+    margin: 0 12px var(--mezera-3);
+  }
+
+  .pr-radek-poli {
+    grid-template-columns: 1fr;
+  }
+
+  .pr-volby {
+    grid-template-columns: 1fr;
+  }
+
+  /* pod 16 px iOS při psaní přiblíží stránku */
+  .pr-pole input:not([type="radio"]):not([type="checkbox"]),
+  .pr-pole select,
+  .pr-pole textarea {
+    font-size: 16px;
   }
 
   .radek-den {
