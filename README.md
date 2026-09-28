@@ -184,7 +184,7 @@ Google Tabulka. Pojmenuj ji třeba „Roadbook – přihlášky".
 
 **2. Skript.** V tabulce *Rozšíření → Apps Script*. Smaž, co je v editoru,
 a vlož celý obsah souboru
-[`apps-script/prihlasky.gs`](https://github.com/Keva-22/Kalend-_Silni-n-ch_z-vod-/blob/claude/attached-documents-2jxd78/apps-script/prihlasky.gs)
+[`apps-script/prihlasky.gs`](https://github.com/Keva-22/Kalender_Radrennen/blob/claude/attached-documents-2jxd78/apps-script/prihlasky.gs)
 (na GitHubu tlačítko *Copy raw file*). Ulož (ikona diskety).
 
 **3. Oprávnění a zkouška.** Nahoře vyber funkci `nastavit` a klikni

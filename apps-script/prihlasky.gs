@@ -16,7 +16,7 @@
  * Po úpravě kódu: Nasadit → Spravovat nasazení → upravit → Nová verze.
  */
 
-const WEB = "https://keva-22.github.io/Kalend-_Silni-n-ch_z-vod-/#mitfahren";
+const WEB = "https://keva-22.github.io/Kalender_Radrennen/#mitfahren";
 
 // Kam chodí e-maily ke schválení. Prázdné = na účet, pod kterým skript běží
 // (vlastník tabulky). Chceš je jinam? Napiš sem adresu, např. "ja@example.com".
