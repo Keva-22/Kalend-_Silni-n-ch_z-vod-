@@ -254,25 +254,37 @@ export const ZAVODY: Zavod[] = [
     misto: "Mondsee", region: "Oberösterreich", zeme: "AT",
     // 39. ročník; web opraven — dřívější 5seen-radmarathon.at nemá žádný obsah
     datum: "2027-06-20", overeno: "ok", serie: null,
+    // názvy tras dle racetime.pro (Tour A/B/C); km/hm beze změny
     trasy: [
-      { nazev: "Kurz", km: 75, hm: 400 },
-      { nazev: "Mittel", km: 140, hm: 1400 },
-      { nazev: "Lang", km: 200, hm: 2600 },
+      { nazev: "Tour C – 75 km", km: 75, hm: 400 },
+      { nazev: "Tour B – 140 km", km: 140, hm: 1400 },
+      { nazev: "Tour A – 200 km", km: 200, hm: 2600 },
     ],
-    uzavirky: "nezname", startovne: null,
+    uzavirky: "nezname",
+    // Startovné je stejné pro všechny trasy a roste s počtem přihlášených:
+    // 501–1 000 → 90 €, 1 001–1 500 → 100 €, 1 501–2 000 → 120 €,
+    // 2 001–2 500 → 140 € (mondsee-radmarathon.com). Aktuálně 140 € a Tour B
+    // vyprodaná — podle uživatele z přihlašovací stránky, 28. 9. 2026.
+    startovne: "140 € za všechny trasy · 140 km vyprodáno · limit 2 500 startujících",
     web: "https://www.mondsee-radmarathon.com",
-    zdroj: "mondsee-radmarathon.com, racetime.pro (vyhledávání 28. 9. 2026)",
+    zdroj: "mondsee-radmarathon.com, racetime.pro (28. 9. 2026)",
 
     /* ── rozšířená pole ── */
     distanceKm: 200,  // [uncertain] nejdelší ze 3 změřených tras
     elevationM: 2600,  // [uncertain] nejdelší ze 3 změřených tras
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 13.0
+    startTime: "06:30",  // [uncertain] Tour A dle tabulky průjezdních časů na webu pořadatele, ročník neuveden
     startLocation: { city: "Mondsee", country: "AT" },
-    registrationUrl: "https://entry.racetime.pro/event/1480/start",  // [uncertain] z výpisu vyhledávání, nenačteno
+    entryFee: "140 € za všechny trasy · 140 km vyprodáno · limit 2 500 startujících",
+    registrationUrl: "https://events.racetime.pro/de/event/1480",
     registrationDeadline: "2027-06-17",  // [uncertain] racetime.pro: online do 17. 6. 2027 cca 8:00, pokud zbývají místa
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
-    sourceUrl: "https://www.mondsee-radmarathon.com",  // [uncertain] domovská stránka pořadatele
-    de: { zdroj: "mondsee-radmarathon.com, racetime.pro (Websuche 28. 9. 2026)" },
+    lastVerified: "2026-09-28",
+    sourceUrl: "https://www.mondsee-radmarathon.com",
+    de: {
+      startovne: "140 € für alle Strecken · 140 km ausverkauft · Limit 2 500 Starter",
+      zdroj: "mondsee-radmarathon.com, racetime.pro (28. 9. 2026)",
+    },
   },
   {
     id: "dreilaendergiro-2027", nazev: "Dreiländergiro",
@@ -330,17 +342,29 @@ export const ZAVODY: Zavod[] = [
       { nazev: "Raiffeisen Power Radmarathon", km: 103.5, hm: 953 }, // [uncertain]
       { nazev: "Krone Champions Radmarathon", km: 200, hm: 3058 },   // [uncertain]
     ],
-    uzavirky: "nezname", startovne: null,
+    uzavirky: "nezname",
+    // Ceník dle screenshotu stránky "Preisstaffelung" od uživatele (28. 9. 2026):
+    // Early Biker 80 € a Fast Biker 90 € (limitované) vyprodány,
+    // Just in Time 105 € do online uzávěrky, Nachnennung 120 €.
+    // Ceník nerozlišuje trasy a rok ročníku na něm není uveden.
+    startovne: "105 € do online uzávěrky → 120 € na místě (80 / 90 € vyprodáno)",  // [uncertain] ročník
     web: "https://www.wachau-radmarathon.at",
-    zdroj: "wachau-radmarathon.at",
+    zdroj: "wachau-radmarathon.at (ceník 28. 9. 2026)",
 
     /* ── rozšířená pole ── */
     distanceKm: 200,   // [uncertain] nejdelší ze 3 tras
     elevationM: 3058,  // [uncertain]
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.3
     startLocation: { city: "Mautern an der Donau", country: "AT" },
+    entryFee: "105 € do online uzávěrky → 120 € na místě (80 / 90 € vyprodáno)",  // [uncertain] ročník
+    registrationUrl: "https://www.wachau-radmarathon.at/en/registration",  // [uncertain] z výpisu vyhledávání, nenačteno
     status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    lastVerified: "2026-09-28",
     sourceUrl: "https://www.wachau-radmarathon.at",  // [uncertain] zdroj "wachau-radmarathon.at" odpovídá doméně webu
+    de: {
+      startovne: "105 € bis Online-Anmeldeschluss → 120 € Nachnennung (80 / 90 € ausverkauft)",
+      zdroj: "wachau-radmarathon.at (Preisliste 28. 9. 2026)",
+    },
   },
   {
     id: "arlberg-2027", nazev: "Arlberg Giro",
