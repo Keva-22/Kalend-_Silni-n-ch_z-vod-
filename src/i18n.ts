@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { Uzavirky, Zavod } from "./types";
+import type { Uzavirky, Zavod, Zeme } from "./types";
 import type { KlicProfilu } from "./ui";
 
 /* Přepínání jazyka bez knihovny: slovník textů rozhraní + volitelné
@@ -51,6 +51,12 @@ export interface Texty {
   zaDni: (dni: number) => string;
   probehlo: string;
   terminKOvereni: string;
+  nejblizsiZavod: string;
+  sezonaNadpis: string;
+  zemeNadpis: string;
+  zobrazeniNadpis: string;
+  mesiceNadpis: string;
+  nazvyZemi: Record<Zeme, string>;
 }
 
 const CS: Texty = {
@@ -117,6 +123,19 @@ const CS: Texty = {
     n === 0 ? "dnes" : n === 1 ? "zítra" : `za ${n} ${n >= 2 && n <= 4 ? "dny" : "dní"}`,
   probehlo: "proběhlo",
   terminKOvereni: "termín k ověření",
+  nejblizsiZavod: "Nejbližší závod",
+  sezonaNadpis: "Sezóna",
+  zemeNadpis: "Země",
+  zobrazeniNadpis: "Zobrazení",
+  mesiceNadpis: "Přejít na měsíc",
+  nazvyZemi: {
+    CZ: "Česko",
+    AT: "Rakousko",
+    DE: "Německo",
+    SK: "Slovensko",
+    IT: "Itálie",
+    HR: "Chorvatsko",
+  },
 };
 
 const DE: Texty = {
@@ -184,6 +203,19 @@ const DE: Texty = {
   zaDni: (n) => (n === 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`),
   probehlo: "vorbei",
   terminKOvereni: "Termin unbestätigt",
+  nejblizsiZavod: "Nächstes Rennen",
+  sezonaNadpis: "Saison",
+  zemeNadpis: "Länder",
+  zobrazeniNadpis: "Ansicht",
+  mesiceNadpis: "Zum Monat",
+  nazvyZemi: {
+    CZ: "Tschechien",
+    AT: "Österreich",
+    DE: "Deutschland",
+    SK: "Slowakei",
+    IT: "Italien",
+    HR: "Kroatien",
+  },
 };
 
 export const TEXTY: Record<Jazyk, Texty> = { cs: CS, de: DE };

@@ -1467,6 +1467,473 @@ button.pr-tlacitko {
   overflow: hidden;
 }
 
+/* ── Prvky jen pro širší displeje ────────────────────────── */
+
+/* Na mobilu schované; ukáže je až rozvržení pro notebook a PC níže. */
+.panel-titulek,
+.zeme-nazev,
+.zeme-pocet,
+.legenda-graf,
+.legenda-pocet,
+.mesice-nav,
+.hero-karta,
+.radek-trasy {
+  display: none;
+}
+
+/* Na mobilu se boční panel „rozpustí" do toku stránky, aby panel filtrů
+   mohl zůstat přilepený nahoře přes celý seznam. */
+.bocni {
+  display: contents;
+}
+
+/* trasy v řádku: délka, převýšení a tečka v barvě profilu trasy */
+.trasa-cip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-tlum);
+  background: var(--plocha-tlum);
+  border: 1px solid var(--linka);
+  padding: 3px 9px;
+  border-radius: var(--radius-pilulka);
+  white-space: nowrap;
+}
+
+.trasa-cip strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.trasa-cip::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--barva, var(--linka-vyrazna));
+}
+
+.trasa-cip--rovina { --barva: var(--profil-rovina); }
+.trasa-cip--zvlnena { --barva: var(--profil-zvlnena); }
+.trasa-cip--kopcovita { --barva: var(--profil-kopcovita); }
+.trasa-cip--horska { --barva: var(--profil-horska); }
+
+/* karta nejbližšího závodu v hlavičce — světlá „vstupenka" na tmavém */
+.hero-karta {
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 22px 18px;
+  color: var(--text);
+  background: var(--plocha);
+  border-top: 5px solid var(--zluta);
+  border-radius: 16px;
+  box-shadow: 0 22px 44px rgba(4, 12, 30, 0.38);
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.hero-karta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 26px 52px rgba(4, 12, 30, 0.45);
+}
+
+.hero-karta-popisek {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-slaby);
+}
+
+.hero-karta-odpocet {
+  font-family: var(--display);
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--akcent);
+}
+
+.hero-karta-nazev {
+  margin-top: 8px;
+  font-family: var(--display);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.hero-karta-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--text-tlum);
+}
+
+.hero-karta-cisla {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--linka-vyrazna);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--text-tlum);
+}
+
+.hero-karta-cisla strong {
+  font-size: 18px;
+  color: var(--text);
+}
+
+.hero-karta-cisla .profil-popisek {
+  margin-left: auto;
+}
+
+/* trasy v řádku tam, kde je místo: tablet bez bočního panelu a velký monitor */
+@media (min-width: 760px) and (max-width: 1023px), (min-width: 1180px) {
+  .radek-trasy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+}
+
+/* ── Notebook a PC (od 1024 px): hlavička přes šířku, boční panel ─── */
+
+@media (min-width: 1024px) {
+  .obal {
+    max-width: 1320px;
+    padding: 0 28px 72px;
+  }
+
+  /* stránka s přihláškami zůstává jako čitelný sloupec */
+  .obal--uzke {
+    max-width: 900px;
+  }
+
+  .hlavicka {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(300px, 27vw, 370px);
+    grid-template-areas:
+      "horni horni"
+      "nadpis karta"
+      "popis karta"
+      "pata karta"
+      "cta karta";
+    align-content: start;
+    column-gap: clamp(32px, 4vw, 56px);
+    margin: 24px 0 0;
+    padding: 44px 48px 104px;
+    border-radius: 24px;
+    background-size: 100% 120px, auto, auto;
+  }
+
+  .obal--uzke .hlavicka {
+    display: block;
+    padding: 40px 44px 96px;
+  }
+
+  /* obsah stránky s přihláškami zarovnaný s okraji hlavičky */
+  .obal--uzke .mesic-hlava {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .obal--uzke .seznam,
+  .obal--uzke .prazdno,
+  .obal--uzke .pr-ja,
+  .obal--uzke .poznamka {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .hlavicka-horni { grid-area: horni; }
+  .hlavicka h1 { grid-area: nadpis; font-size: clamp(54px, 5.4vw, 80px); }
+  .hlavicka p { grid-area: popis; font-size: 15.5px; max-width: 580px; }
+  .hlavicka-pata { grid-area: pata; }
+  .odkaz-prihlasky { grid-area: cta; justify-self: start; }
+
+  .hero-karta {
+    grid-area: karta;
+    display: flex;
+    align-self: center;
+  }
+
+  /* karta nahoře nahrazuje čip s nejbližším závodem */
+  .cip--odkaz {
+    display: none;
+  }
+
+  .rozlozeni {
+    display: grid;
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+    margin-top: 28px;
+  }
+
+  .bocni {
+    position: sticky;
+    top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    /* místo pro stíny karet, které by jinak overflow ořízl */
+    margin: -4px;
+    padding: 4px;
+  }
+
+  .ovladani {
+    position: static;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0;
+    padding: 16px;
+    background: var(--plocha);
+    backdrop-filter: none;
+    box-shadow: var(--stin);
+  }
+
+  .panel-titulek {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-slaby);
+  }
+
+  .panel-titulek:first-child {
+    margin-top: 0;
+  }
+
+  .segment {
+    display: flex;
+  }
+
+  .segment .prepinac {
+    flex: 1;
+  }
+
+  .ovladani-mezera {
+    display: none;
+  }
+
+  .zeme-volby {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .prepinac-zeme {
+    width: 100%;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: var(--radius-male);
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .zeme-nazev {
+    display: inline;
+    font-family: var(--body);
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--text-tlum);
+  }
+
+  .zeme-pocet {
+    display: inline-block;
+    min-width: 24px;
+    margin-left: auto;
+    padding: 1px 7px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-slaby);
+    background: var(--pozadi);
+    border-radius: var(--radius-pilulka);
+  }
+
+  .prepinac-zeme.aktivni .zeme-nazev {
+    color: var(--akcent-tmavy);
+  }
+
+  .prepinac-zeme.aktivni .zeme-pocet {
+    color: var(--akcent-tmavy);
+    background: var(--plocha);
+  }
+
+  .legenda {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0;
+    padding: 16px;
+    font-size: 11px;
+    background: var(--plocha);
+    border: 1px solid var(--linka);
+    border-radius: var(--radius);
+    box-shadow: var(--stin);
+  }
+
+  .legenda-graf {
+    display: flex;
+    gap: 2px;
+    height: 10px;
+    margin: 2px 0 4px;
+    overflow: hidden;
+    background: var(--linka);
+    border-radius: var(--radius-pilulka);
+  }
+
+  .legenda-graf > span {
+    min-width: 6px;
+  }
+
+  .legenda-polozka {
+    display: flex;
+  }
+
+  .legenda-pocet {
+    display: inline;
+    margin-left: auto;
+    color: var(--text);
+  }
+
+  .mesice-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px;
+    background: var(--plocha);
+    border: 1px solid var(--linka);
+    border-radius: var(--radius);
+    box-shadow: var(--stin);
+  }
+
+  .mesice-nav .panel-titulek {
+    margin: 0;
+    padding: 4px 6px 6px;
+  }
+
+  .mesice-nav-polozka {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-male);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+  }
+
+  .mesice-nav-polozka:hover {
+    background: var(--plocha-akcent);
+  }
+
+  .mesice-nav-nazev {
+    min-width: 88px;
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mesice-nav-tecky {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .mesice-nav-tecky > span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+  .mesice-nav-tecka--tbc {
+    box-shadow: inset 0 0 0 1.5px var(--text-slaby);
+  }
+
+  .mesice-nav-pocet {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--text-slaby);
+  }
+
+  .hlavni section {
+    scroll-margin-top: 16px;
+  }
+
+  .hlavni .mesic-hlava {
+    padding: var(--mezera-6) 0 var(--mezera-3);
+  }
+
+  .hlavni section:first-child .mesic-hlava {
+    padding-top: 4px;
+  }
+
+  .mesic-hlava h2 {
+    font-size: 26px;
+  }
+
+  .hlavni .seznam,
+  .hlavni .mrizka-obal,
+  .hlavni .prazdno {
+    margin: 0;
+  }
+
+  .hlavni .poznamka {
+    margin: 22px 0 0;
+  }
+
+  .radek-tlacitko {
+    gap: 20px;
+    padding: 18px 22px;
+  }
+
+  .radek-nazev {
+    font-size: 24px;
+  }
+
+  .detail {
+    padding: 22px 22px 24px;
+  }
+
+  .mrizka-obal {
+    padding: 18px;
+  }
+
+  .mrizka-den {
+    min-height: 96px;
+    padding: 7px;
+  }
+
+  .mrizka-zavod {
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+}
+
 /* ── Úzké displeje (375 px) ──────────────────────────────── */
 
 @media (max-width: 480px) {

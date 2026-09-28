@@ -1,5 +1,5 @@
 import type { Zavod } from "../types";
-import { profilZavodu } from "../ui";
+import { profilTrasy, profilZavodu } from "../ui";
 import { useTexty } from "../i18n";
 import { dnesniDatum, jeBudouci } from "../prihlasky";
 import { Detail } from "./Detail";
@@ -87,6 +87,30 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
             </div>
           )}
         </div>
+
+        {/* všechny trasy s km/hm — jen na širších displejích, kde je místo */}
+        {zavod.trasy.length > 1 && (
+          <div className="radek-trasy">
+            {zavod.trasy.map((tr) => {
+              const pt = tr.km !== null && tr.hm !== null ? profilTrasy(tr.km, tr.hm) : null;
+              return (
+                <span
+                  key={tr.nazev}
+                  className={"trasa-cip" + (pt ? ` trasa-cip--${pt.klic}` : "")}
+                  title={tr.nazev}
+                >
+                  <strong>{tr.km ?? "?"} km</strong>
+                  {tr.hm !== null && (
+                    <>
+                      {" "}
+                      · {tr.hm} {t.jednotkaHm}
+                    </>
+                  )}
+                </span>
+              );
+            })}
+          </div>
+        )}
 
         <div className="radek-cisla">
           {p ? (

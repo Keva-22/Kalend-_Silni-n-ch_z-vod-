@@ -190,7 +190,7 @@ export function Prihlasky({
   }, [zavody]);
 
   return (
-    <div className="obal" lang="de">
+    <div className="obal obal--uzke" lang="de">
       <header className="hlavicka">
         <a className="zpet" href="#">
           ← Zum Kalender

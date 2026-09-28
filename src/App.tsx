@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Zavod, Zeme } from "./types";
 import { ZAVODY } from "./data/zavody";
-import { PROFILY, klicMesice, porovnejZavody } from "./ui";
+import {
+  PROFILY,
+  klicMesice,
+  porovnejZavody,
+  profilZavodu,
+  type KlicProfilu,
+} from "./ui";
 import { PRIHLASKY_ZAPNUTE, dnesniDatum } from "./prihlasky";
 import {
   NAZVY_JAZYKU,
@@ -150,6 +156,34 @@ export default function App() {
   );
   const volbyZeme: (Zeme | "vse")[] = ["vse", ...dostupneZeme];
 
+  /* Počty pro boční panel: závody sezóny podle země a vybrané závody
+     podle profilu (bez km/hm se do profilů nepočítají). */
+  const vSezone = useMemo(
+    () => zavody.filter((z) => klicMesice(z).startsWith(sezona)),
+    [zavody, sezona],
+  );
+  const pocetZeme = (volba: Zeme | "vse") =>
+    volba === "vse" ? vSezone.length : vSezone.filter((z) => z.zeme === volba).length;
+  const pocetProfilu = useMemo(() => {
+    const pocty: Record<KlicProfilu, number> = { rovina: 0, zvlnena: 0, kopcovita: 0, horska: 0 };
+    for (const z of filtrovane) {
+      const p = profilZavodu(z);
+      if (p) pocty[p.profil.klic]++;
+    }
+    return pocty;
+  }, [filtrovane]);
+
+  function skocNaMesic(klic: string) {
+    const klidne = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .getElementById(`mesic-${klic}`)
+      ?.scrollIntoView({ behavior: klidne ? "auto" : "smooth", block: "start" });
+  }
+
+  const dalsi = nejblizsi ? lokalizujZavod(nejblizsi.zavod, jazyk) : null;
+  const dalsiProfil = dalsi ? profilZavodu(dalsi) : null;
+  const dalsiDatum = dalsi?.datum ? new Date(dalsi.datum + "T12:00:00") : null;
+
   if (stranka.typ === "prihlasky") {
     return <Prihlasky cilovyZavod={stranka.zavod} klicZOdkazu={stranka.klic} />;
   }
@@ -197,131 +231,202 @@ export default function App() {
               {t.odkazPrihlasky}
             </a>
           )}
+          {/* na širších displejích karta nejbližšího závodu vpravo */}
+          {nejblizsi && dalsi && dalsiDatum && (
+            <a className="hero-karta" href={`#zavod/${dalsi.id}`}>
+              <span className="hero-karta-popisek">{t.nejblizsiZavod}</span>
+              <span className="hero-karta-odpocet">{t.zaDni(nejblizsi.dni)}</span>
+              <span className="hero-karta-nazev">{dalsi.nazev}</span>
+              <span className="hero-karta-info">
+                <Vlajka zeme={dalsi.zeme} />
+                {t.dnyZkratky[dalsiDatum.getDay()]} {dalsiDatum.getDate()}.{" "}
+                {dalsiDatum.getMonth() + 1}. {dalsiDatum.getFullYear()} · {dalsi.misto}
+              </span>
+              {dalsiProfil && (
+                <span className="hero-karta-cisla">
+                  <strong>{dalsiProfil.trasa.km} km</strong>
+                  <span>
+                    ▲ {dalsiProfil.trasa.hm} {t.jednotkaHm}
+                  </span>
+                  <span className={`profil-popisek profil--${dalsiProfil.profil.klic}`}>
+                    {t.profily[dalsiProfil.profil.klic]}
+                  </span>
+                </span>
+              )}
+            </a>
+          )}
         </header>
 
-        <div className="ovladani">
-          <div className="segment segment--sezona">
-            {SEZONY.map((s) => (
-              <button
-                key={s}
-                className={"prepinac prepinac-sezona" + (sezona === s ? " aktivni" : "")}
-                aria-pressed={sezona === s}
-                onClick={() => {
-                  setSezona(s);
-                  prepniZavod(null);
-                }}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-
-          <div className="zeme-volby">
-            {volbyZeme.map((volba) => (
-              <button
-                key={volba}
-                className={"prepinac prepinac-zeme" + (zeme === volba ? " aktivni" : "")}
-                aria-pressed={zeme === volba}
-                onClick={() => setZeme(volba)}
-              >
-                {volba === "vse" ? (
-                  t.vse
-                ) : (
-                  <>
-                    <Vlajka zeme={volba} />
-                    {volba}
-                  </>
-                )}
-              </button>
-            ))}
-          </div>
-
-          <div className="ovladani-mezera" />
-
-          <div className="segment">
-            {(
-              [
-                ["seznam", t.seznam],
-                ["kalendar", t.kalendar],
-              ] as const
-            ).map(([klic, popisek]) => (
-              <button
-                key={klic}
-                className={"prepinac" + (pohled === klic ? " aktivni" : "")}
-                aria-pressed={pohled === klic}
-                onClick={() => setPohled(klic)}
-              >
-                {popisek}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="legenda">
-          <span className="legenda-titulek">{t.legenda}</span>
-          {PROFILY.map((p, i) => (
-            <span key={p.klic} className="legenda-polozka">
-              <span className={`legenda-vzorek pruh--${p.klic}`} />
-              <span className={`profil--${p.klic}`}>{t.profily[p.klic]}</span>
-              <span className="legenda-rozsah">
-                {i === 0
-                  ? "<8"
-                  : p.max === Infinity
-                    ? ">22"
-                    : `${PROFILY[i - 1].max}–${p.max}`}
-              </span>
-            </span>
-          ))}
-          <span className="legenda-polozka">
-            <span className="radek-otaznik radek-otaznik--legenda" aria-hidden="true">
-              ?
-            </span>
-            {t.terminKOvereni}
-          </span>
-        </div>
-
-        {mesice.length === 0 ? (
-          <div className="prazdno">
-            <p>{t.prazdno}</p>
-          </div>
-        ) : (
-          mesice.map(([klic, zavodyMesice]) => {
-            const cisloMesice = Number(klic.slice(5));
-            return (
-              <section key={klic}>
-                <div className="mesic-hlava">
-                  <h2>{t.mesice[cisloMesice - 1]}</h2>
-                  <div className="cara" />
-                  <span className="pocet">{t.pocetZavodu(zavodyMesice.length)}</span>
-                </div>
-
-                {pohled === "seznam" ? (
-                  <div className="seznam">
-                    {zavodyMesice.map((z) => (
-                      <Radek
-                        key={z.id}
-                        zavod={z}
-                        otevreno={otevreny === z.id}
-                        prepni={() => prepniZavod(otevreny === z.id ? null : z.id)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <Mrizka
-                    zavody={zavodyMesice}
-                    mesic={klic}
-                    naKlik={(id) => {
-                      setPohled("seznam");
-                      prepniZavod(id);
+        <div className="rozlozeni">
+          <aside className="bocni">
+            <div className="ovladani">
+              <div className="panel-titulek">{t.sezonaNadpis}</div>
+              <div className="segment segment--sezona">
+                {SEZONY.map((s) => (
+                  <button
+                    key={s}
+                    className={"prepinac prepinac-sezona" + (sezona === s ? " aktivni" : "")}
+                    aria-pressed={sezona === s}
+                    onClick={() => {
+                      setSezona(s);
+                      prepniZavod(null);
                     }}
-                  />
-                )}
-              </section>
-            );
-          })
-        )}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
 
-        <p className="poznamka">{t.poznamka}</p>
+              <div className="panel-titulek">{t.zemeNadpis}</div>
+              <div className="zeme-volby">
+                {volbyZeme.map((volba) => (
+                  <button
+                    key={volba}
+                    className={"prepinac prepinac-zeme" + (zeme === volba ? " aktivni" : "")}
+                    aria-pressed={zeme === volba}
+                    onClick={() => setZeme(volba)}
+                  >
+                    {volba === "vse" ? (
+                      <span>{t.vse}</span>
+                    ) : (
+                      <>
+                        <Vlajka zeme={volba} />
+                        <span>{volba}</span>
+                        <span className="zeme-nazev">{t.nazvyZemi[volba]}</span>
+                      </>
+                    )}
+                    <span className="zeme-pocet">{pocetZeme(volba)}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="ovladani-mezera" />
+
+              <div className="panel-titulek">{t.zobrazeniNadpis}</div>
+              <div className="segment segment--pohled">
+                {(
+                  [
+                    ["seznam", t.seznam],
+                    ["kalendar", t.kalendar],
+                  ] as const
+                ).map(([klic, popisek]) => (
+                  <button
+                    key={klic}
+                    className={"prepinac" + (pohled === klic ? " aktivni" : "")}
+                    aria-pressed={pohled === klic}
+                    onClick={() => setPohled(klic)}
+                  >
+                    {popisek}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="legenda">
+              <span className="legenda-titulek">{t.legenda}</span>
+              {/* poměr profilů ve výběru — jen na širších displejích */}
+              <div className="legenda-graf" aria-hidden="true">
+                {PROFILY.map((p) =>
+                  pocetProfilu[p.klic] > 0 ? (
+                    <span
+                      key={p.klic}
+                      className={`pruh--${p.klic}`}
+                      style={{ flexGrow: pocetProfilu[p.klic] }}
+                    />
+                  ) : null,
+                )}
+              </div>
+              {PROFILY.map((p, i) => (
+                <span key={p.klic} className="legenda-polozka">
+                  <span className={`legenda-vzorek pruh--${p.klic}`} />
+                  <span className={`profil--${p.klic}`}>{t.profily[p.klic]}</span>
+                  <span className="legenda-rozsah">
+                    {i === 0
+                      ? "<8"
+                      : p.max === Infinity
+                        ? ">22"
+                        : `${PROFILY[i - 1].max}–${p.max}`}
+                  </span>
+                  <span className="legenda-pocet">{pocetProfilu[p.klic]}</span>
+                </span>
+              ))}
+              <span className="legenda-polozka">
+                <span className="radek-otaznik radek-otaznik--legenda" aria-hidden="true">
+                  ?
+                </span>
+                {t.terminKOvereni}
+              </span>
+            </div>
+
+            {mesice.length > 0 && (
+              <nav className="mesice-nav" aria-label={t.mesiceNadpis}>
+                <span className="panel-titulek">{t.mesiceNadpis}</span>
+                {mesice.map(([klic, zavodyMesice]) => (
+                  <button key={klic} className="mesice-nav-polozka" onClick={() => skocNaMesic(klic)}>
+                    <span className="mesice-nav-nazev">{t.mesice[Number(klic.slice(5)) - 1]}</span>
+                    <span className="mesice-nav-tecky" aria-hidden="true">
+                      {zavodyMesice.map((z) => {
+                        const p = profilZavodu(z);
+                        return (
+                          <span
+                            key={z.id}
+                            className={p ? `pruh--${p.profil.klic}` : "mesice-nav-tecka--tbc"}
+                          />
+                        );
+                      })}
+                    </span>
+                    <span className="mesice-nav-pocet">{zavodyMesice.length}</span>
+                  </button>
+                ))}
+              </nav>
+            )}
+          </aside>
+
+          <main className="hlavni">
+            {mesice.length === 0 ? (
+              <div className="prazdno">
+                <p>{t.prazdno}</p>
+              </div>
+            ) : (
+              mesice.map(([klic, zavodyMesice]) => {
+                const cisloMesice = Number(klic.slice(5));
+                return (
+                  <section key={klic} id={`mesic-${klic}`}>
+                    <div className="mesic-hlava">
+                      <h2>{t.mesice[cisloMesice - 1]}</h2>
+                      <div className="cara" />
+                      <span className="pocet">{t.pocetZavodu(zavodyMesice.length)}</span>
+                    </div>
+
+                    {pohled === "seznam" ? (
+                      <div className="seznam">
+                        {zavodyMesice.map((z) => (
+                          <Radek
+                            key={z.id}
+                            zavod={z}
+                            otevreno={otevreny === z.id}
+                            prepni={() => prepniZavod(otevreny === z.id ? null : z.id)}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <Mrizka
+                        zavody={zavodyMesice}
+                        mesic={klic}
+                        naKlik={(id) => {
+                          setPohled("seznam");
+                          prepniZavod(id);
+                        }}
+                      />
+                    )}
+                  </section>
+                );
+              })
+            )}
+
+            <p className="poznamka">{t.poznamka}</p>
+          </main>
+        </div>
       </div>
     </TextyContext.Provider>
   );
