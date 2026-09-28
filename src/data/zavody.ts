@@ -71,7 +71,7 @@ export const ZAVODY: Zavod[] = [
     id: "istria300-2026", nazev: "Istria300",
     misto: "Poreč", region: "Istra", zeme: "HR",
     // ročník 2026 byl mimořádně posunut z konce září kvůli změnám v kalendáři UCI
-    datum: "2026-10-03", overeno: "check", serie: null,
+    datum: "2026-10-03", overeno: "ok", serie: null,
     trasy: [
       { nazev: "Istria300", km: 300.5, hm: 5150 },  // [uncertain]
       { nazev: "Istria209", km: 209, hm: 3250 },    // [uncertain]
@@ -86,7 +86,7 @@ export const ZAVODY: Zavod[] = [
     elevationM: 5150,   // [uncertain]
     profile: "hilly",   // [uncertain] odvozeno z hm/km = 17.1
     startLocation: { city: "Poreč", country: "HR" },
-    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     registrationUrl: "https://www.istria300.com/istria300-registration/",  // [uncertain] z výpisu vyhledávání, nenačteno
     sourceUrl: "https://www.istria300.com/istria300-will-take-place-on-a-new-date-next-year/",  // [uncertain]
     de: { zdroj: "istria300.com (Websuche 27. 9. 2026)" },
@@ -94,10 +94,10 @@ export const ZAVODY: Zavod[] = [
   {
     id: "letape-rovinata-2026", nazev: "L'Etape Czech Republic — Rovinatá etapa",
     misto: "Pardubice", region: "Pardubický kraj", zeme: "CZ",
-    // POZOR: prameny se rozcházejí — stránka pořadatele je nadepsaná
-    // "Rovinatá etapa 3. 10. 2026" (sobota), jiné zdroje uvádějí 4. 10.
-    // Ponechán původní údaj, overeno sníženo na "check" k ověření.
-    datum: "2026-10-04", overeno: "check", serie: "L'Etape by Tour de France",  // [uncertain]
+    // Termín dle stránky pořadatele "Rovinatá etapa 3. 10. 2026" a jejího
+    // harmonogramu soboty 3. 10. (start 10:30). Starší tisková zpráva
+    // uváděla neděli 4. 10. — ta už neplatí. (vyhledávání 28. 9. 2026)
+    datum: "2026-10-03", overeno: "ok", serie: "L'Etape by Tour de France",
     trasy: [{ nazev: "Hlavní trasa", km: 111, hm: 300 }],
     uzavirky: "plna",
     startovne: "1 990 Kč v předprodeji → 3 690 Kč",
@@ -108,11 +108,12 @@ export const ZAVODY: Zavod[] = [
     distanceKm: 111,
     elevationM: 300,
     profile: "flat",  // [uncertain] odvozeno z hm/km = 2.7
+    startTime: "10:30",  // [uncertain] z harmonogramu ve výpisu vyhledávání, nenačteno
     startLocation: { city: "Pardubice", country: "CZ" },
     entryFee: "1 990 Kč v předprodeji → 3 690 Kč",
     series: "L'Etape by Tour de France",
-    status: "provisional",  // [uncertain] termín se mezi zdroji rozchází
-    sourceUrl: "https://www.letapeczech.cz",  // [uncertain] zdroj "letapeczech.cz" odpovídá doméně webu
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    sourceUrl: "https://www.letapeczech.cz/rovinata-etapa-2026/",  // [uncertain] z výpisu vyhledávání, nenačteno
     de: {
       nazev: "L'Etape Czech Republic — Flache Etappe",
       region: "Region Pardubice",
@@ -201,17 +202,21 @@ export const ZAVODY: Zavod[] = [
   {
     id: "fichtelberg-2027", nazev: "15. Fichtelberg-Radmarathon",
     misto: "Chemnitz", region: "Sachsen", zeme: "DE",
-    datum: "2027-06-06", overeno: "check", serie: null,
+    // termín z příspěvku pořadatele "Save the Date 2027!"; přihlášky od prosince 2026
+    datum: "2027-06-06", overeno: "ok", serie: null,
     trasy: [{ nazev: "Marathon", km: 90, hm: 1900 }],
     uzavirky: "nezname", startovne: null,
-    web: null, zdroj: "radsport-events.de",
+    web: "https://fichtelberg-radmarathon.de",
+    zdroj: "fichtelberg-radmarathon.de (vyhledávání 28. 9. 2026)",
 
     /* ── rozšířená pole ── */
     distanceKm: 90,
     elevationM: 1900,
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 21.1
     startLocation: { city: "Chemnitz", country: "DE" },
-    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    sourceUrl: "https://fichtelberg-radmarathon.de",  // [uncertain] domovská stránka pořadatele
+    de: { zdroj: "fichtelberg-radmarathon.de (Websuche 28. 9. 2026)" },
   },
   {
     id: "krakonos-2027", nazev: "Casia Krakonošův cyklomaraton",
@@ -247,27 +252,33 @@ export const ZAVODY: Zavod[] = [
   {
     id: "mondsee-2027", nazev: "Mondsee 5 Seen Radmarathon",
     misto: "Mondsee", region: "Oberösterreich", zeme: "AT",
-    datum: "2027-06-20", overeno: "check", serie: null,
+    // 39. ročník; web opraven — dřívější 5seen-radmarathon.at nemá žádný obsah
+    datum: "2027-06-20", overeno: "ok", serie: null,
     trasy: [
       { nazev: "Kurz", km: 75, hm: 400 },
       { nazev: "Mittel", km: 140, hm: 1400 },
       { nazev: "Lang", km: 200, hm: 2600 },
     ],
     uzavirky: "nezname", startovne: null,
-    web: "https://www.5seen-radmarathon.at",
-    zdroj: "radsport-events.de",
+    web: "https://www.mondsee-radmarathon.com",
+    zdroj: "mondsee-radmarathon.com, racetime.pro (vyhledávání 28. 9. 2026)",
 
     /* ── rozšířená pole ── */
     distanceKm: 200,  // [uncertain] nejdelší ze 3 změřených tras
     elevationM: 2600,  // [uncertain] nejdelší ze 3 změřených tras
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 13.0
     startLocation: { city: "Mondsee", country: "AT" },
-    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    registrationUrl: "https://entry.racetime.pro/event/1480/start",  // [uncertain] z výpisu vyhledávání, nenačteno
+    registrationDeadline: "2027-06-17",  // [uncertain] racetime.pro: online do 17. 6. 2027 cca 8:00, pokud zbývají místa
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    sourceUrl: "https://www.mondsee-radmarathon.com",  // [uncertain] domovská stránka pořadatele
+    de: { zdroj: "mondsee-radmarathon.com, racetime.pro (Websuche 28. 9. 2026)" },
   },
   {
     id: "dreilaendergiro-2027", nazev: "Dreiländergiro",
     misto: "Nauders", region: "Tirol", zeme: "AT",
-    datum: "2027-06-27", overeno: "check", serie: null,
+    // termín potvrzen na dreilaendergiro.at; prodej startovních míst od 1. 10. 2026
+    datum: "2027-06-27", overeno: "ok", serie: null,
     // trasa vede přes Rakousko, Itálii a Švýcarsko (Stilfserjoch, Umbrailpass)
     trasy: [
       { nazev: "Strecke A – Stelvio Engadin", km: 168, hm: 3300 },   // [uncertain]
@@ -275,16 +286,16 @@ export const ZAVODY: Zavod[] = [
     ],
     uzavirky: "nezname", startovne: null,
     web: "https://www.dreilaendergiro.at",
-    zdroj: "dreilaendergiro.at / tirol.at (vyhledávání 27. 9. 2026)",
+    zdroj: "dreilaendergiro.at (vyhledávání 28. 9. 2026)",
 
     /* ── rozšířená pole ── */
     distanceKm: 168,   // [uncertain] nejdelší ze 2 tras
     elevationM: 3300,  // [uncertain]
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 19.6
     startLocation: { city: "Nauders", country: "AT" },
-    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
     sourceUrl: "https://www.dreilaendergiro.at",  // [uncertain] domovská stránka pořadatele
-    de: { zdroj: "dreilaendergiro.at / tirol.at (Websuche 27. 9. 2026)" },
+    de: { zdroj: "dreilaendergiro.at (Websuche 28. 9. 2026)" },
   },
   {
     id: "tannheim-2027", nazev: "Rad-Marathon Tannheimer Tal",
@@ -334,20 +345,67 @@ export const ZAVODY: Zavod[] = [
   {
     id: "arlberg-2027", nazev: "Arlberg Giro",
     misto: "St. Anton am Arlberg", region: "Tirol", zeme: "AT",
-    datum: "2027-08-01", overeno: "check", serie: "Tiroler Rennrad Cup",
+    // termín z arlberg-giro.com; přihlášky otevřeny 15. 9. 2026,
+    // den předtím (30. 7. 2027) se jede St. Anton Night Sprint
+    datum: "2027-08-01", overeno: "ok", serie: "Tiroler Rennrad Cup",
     trasy: [{ nazev: "Giro", km: 150, hm: 2500 }],
     uzavirky: "nezname", startovne: null,
-    web: null, zdroj: "tirol.at",
+    web: "https://arlberg-giro.com",
+    zdroj: "arlberg-giro.com (vyhledávání 28. 9. 2026)",
 
     /* ── rozšířená pole ── */
     distanceKm: 150,
     elevationM: 2500,
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 16.7
     startLocation: { city: "St. Anton am Arlberg", country: "AT" },
+    registrationUrl: "https://arlberg-giro.com/en/registration",  // [uncertain] z výpisu vyhledávání, nenačteno
     series: "Tiroler Rennrad Cup",
-    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    sourceUrl: "https://arlberg-giro.com",  // [uncertain] domovská stránka pořadatele
+    de: { zdroj: "arlberg-giro.com (Websuche 28. 9. 2026)" },
   },
 
+  {
+    id: "kufstein-2027", nazev: "Kufsteinerland Radmarathon",
+    misto: "Kufstein", region: "Tirol", zeme: "AT",
+    datum: "2027-08-22", overeno: "ok",
+    serie: "Tiroler Rennrad Cup",
+    // km/hm dle 10. ročníku (23. 8. 2026); zdroj: kufsteinerland-radmarathon.at
+    trasy: [
+      { nazev: "Marathon", km: 120, hm: 1800 },     // [uncertain] zdroj uvádí "ca. 1800 hm"
+      { nazev: "Seenrunde", km: 95, hm: 1160 },     // [uncertain]
+      { nazev: "Panoramarunde", km: 48, hm: 400 },  // [uncertain]
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.kufsteinerland-radmarathon.at",
+    zdroj: "kufsteinerland-radmarathon.at (termín, vyhledávání 28. 9. 2026); trasy dle ročníku 2026",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 120,   // [uncertain] nejdelší ze 3 tras, ročník 2026
+    elevationM: 1800,  // [uncertain] ročník 2026
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.0
+    startLocation: { city: "Kufstein", country: "AT" },
+    series: "Tiroler Rennrad Cup",
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    de: { zdroj: "kufsteinerland-radmarathon.at (Termin, Websuche 28. 9. 2026); Strecken laut Ausgabe 2026" },
+  },
+  {
+    id: "oetztaler-2027", nazev: "Ötztaler Radmarathon",
+    misto: "Sölden", region: "Tirol", zeme: "AT",
+    datum: "2027-08-29", overeno: "check", serie: null,
+    trasy: [{ nazev: "Marathon", km: 227, hm: 5500 }],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.oetztaler-radmarathon.com",
+    zdroj: "termín: central-soelden.com + intervalcoach.app (vyhledávání 27. 9. 2026); trasa dle ročníku 2026",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 227,
+    elevationM: 5500,
+    profile: "mountain",  // [uncertain] odvozeno z hm/km = 24.2
+    startLocation: { city: "Sölden", country: "AT" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    de: { zdroj: "Termin: central-soelden.com + intervalcoach.app (Websuche 27. 9. 2026); Strecke laut Ausgabe 2026" },
+  },
   {
     id: "kitzbuehel-2027", nazev: "Kitzbüheler Radmarathon",
     misto: "Kitzbühel", region: "Tirol", zeme: "AT",
@@ -477,47 +535,6 @@ export const ZAVODY: Zavod[] = [
     status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
     sourceUrl: "https://www.sauwaldgiro.at",  // [uncertain] domovská stránka pořadatele
     de: { zdroj: "sauwaldgiro.at / radmarathon.at (Websuche 27. 9. 2026); Termin 2027 noch nicht bekannt" },
-  },
-  {
-    id: "kufstein-2027", nazev: "Kufsteinerland Radmarathon",
-    misto: "Kufstein", region: "Tirol", zeme: "AT",
-    datum: null, odhadMesic: "2027-08", overeno: "tbc",
-    serie: "Tiroler Rennrad Cup",
-    // km/hm dle 10. ročníku (23. 8. 2026); zdroj: kufsteinerland-radmarathon.at
-    trasy: [
-      { nazev: "Marathon", km: 120, hm: 1800 },     // [uncertain] zdroj uvádí "ca. 1800 hm"
-      { nazev: "Seenrunde", km: 95, hm: 1160 },     // [uncertain]
-      { nazev: "Panoramarunde", km: 48, hm: 400 },  // [uncertain]
-    ],
-    uzavirky: "nezname", startovne: null,
-    web: "https://www.kufsteinerland-radmarathon.at",
-    zdroj: "ročník 2026 pro orientaci",
-
-    /* ── rozšířená pole ── */
-    distanceKm: 120,   // [uncertain] nejdelší ze 3 tras, ročník 2026
-    elevationM: 1800,  // [uncertain] ročník 2026
-    profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.0
-    startLocation: { city: "Kufstein", country: "AT" },
-    series: "Tiroler Rennrad Cup",
-    status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
-    de: { zdroj: "Ausgabe 2026 zur Orientierung" },
-  },
-  {
-    id: "oetztaler-2027", nazev: "Ötztaler Radmarathon",
-    misto: "Sölden", region: "Tirol", zeme: "AT",
-    datum: "2027-08-29", overeno: "check", serie: null,
-    trasy: [{ nazev: "Marathon", km: 227, hm: 5500 }],
-    uzavirky: "nezname", startovne: null,
-    web: "https://www.oetztaler-radmarathon.com",
-    zdroj: "termín: central-soelden.com + intervalcoach.app (vyhledávání 27. 9. 2026); trasa dle ročníku 2026",
-
-    /* ── rozšířená pole ── */
-    distanceKm: 227,
-    elevationM: 5500,
-    profile: "mountain",  // [uncertain] odvozeno z hm/km = 24.2
-    startLocation: { city: "Sölden", country: "AT" },
-    status: "provisional",  // [uncertain] odvozeno z overeno="check"
-    de: { zdroj: "Termin: central-soelden.com + intervalcoach.app (Websuche 27. 9. 2026); Strecke laut Ausgabe 2026" },
   },
   {
     id: "carinthia200-2027", nazev: "Carinthia200",
