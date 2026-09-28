@@ -1312,7 +1312,7 @@ button.pr-tlacitko {
 
 /* panel „Meine Anmeldungen" */
 .pr-ja {
-  margin: 0 var(--mezera-4) var(--mezera-3);
+  margin: var(--mezera-3) var(--mezera-4) 0;
   padding: 16px 18px;
   background: var(--plocha);
   border: 1px solid var(--linka);
@@ -1593,6 +1593,64 @@ button.pr-tlacitko {
   margin-left: auto;
 }
 
+.hero-karta-akce {
+  margin-left: auto;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--akcent);
+  border-radius: var(--radius-pilulka);
+  white-space: nowrap;
+}
+
+/* přihlášky: filtr (na mobilu řada pilulek, na PC seznam v panelu) */
+.pr-panel {
+  margin: var(--mezera-3) var(--mezera-4) 0;
+}
+
+.pr-filtry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pr-filtr {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pr-filtr-pocet {
+  min-width: 22px;
+  padding: 1px 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-slaby);
+  background: var(--pozadi);
+  border-radius: var(--radius-pilulka);
+}
+
+.pr-filtr.aktivni,
+.pr-filtr.aktivni:hover {
+  color: var(--akcent-tmavy);
+  background: var(--akcent-plocha);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.pr-filtr.aktivni .pr-filtr-pocet {
+  color: var(--akcent-tmavy);
+  background: var(--plocha);
+}
+
+/* přehled čísel má smysl až v bočním panelu na PC */
+.pr-prehled {
+  display: none;
+}
+
 /* trasy v řádku tam, kde je místo: tablet bez bočního panelu a velký monitor */
 @media (min-width: 760px) and (max-width: 1023px), (min-width: 1180px) {
   .radek-trasy {
@@ -1613,11 +1671,6 @@ button.pr-tlacitko {
     padding: 0 28px 72px;
   }
 
-  /* stránka s přihláškami zůstává jako čitelný sloupec */
-  .obal--uzke {
-    max-width: 900px;
-  }
-
   .hlavicka {
     display: grid;
     grid-template-columns: minmax(0, 1fr) clamp(300px, 27vw, 370px);
@@ -1635,26 +1688,8 @@ button.pr-tlacitko {
     background-size: 100% 120px, auto, auto;
   }
 
-  .obal--uzke .hlavicka {
-    display: block;
-    padding: 40px 44px 96px;
-  }
-
-  /* obsah stránky s přihláškami zarovnaný s okraji hlavičky */
-  .obal--uzke .mesic-hlava {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .obal--uzke .seznam,
-  .obal--uzke .prazdno,
-  .obal--uzke .pr-ja,
-  .obal--uzke .poznamka {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .hlavicka-horni { grid-area: horni; }
+  .hlavicka-horni,
+  .zpet { grid-area: horni; justify-self: start; }
   .hlavicka h1 { grid-area: nadpis; font-size: clamp(54px, 5.4vw, 80px); }
   .hlavicka p { grid-area: popis; font-size: 15.5px; max-width: 580px; }
   .hlavicka-pata { grid-area: pata; }
@@ -1874,6 +1909,80 @@ button.pr-tlacitko {
     box-shadow: inset 0 0 0 1.5px var(--text-slaby);
   }
 
+  .mesice-nav-tecka--plna {
+    background: var(--akcent);
+  }
+
+  /* stránka s přihláškami: panely v bočním sloupci */
+  .pr-ja,
+  .pr-panel {
+    margin: 0;
+  }
+
+  .pr-panel {
+    padding: 16px;
+    background: var(--plocha);
+    border: 1px solid var(--linka);
+    border-radius: var(--radius);
+    box-shadow: var(--stin);
+  }
+
+  .pr-filtry {
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 8px;
+  }
+
+  .pr-filtr {
+    width: 100%;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: var(--radius-male);
+    font-size: 12px;
+  }
+
+  .pr-prehled {
+    display: block;
+  }
+
+  .pr-prehled-mrizka {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .pr-cislo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 12px;
+    background: var(--pozadi);
+    border-radius: 10px;
+  }
+
+  .pr-cislo strong {
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--akcent);
+  }
+
+  .pr-cislo span {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-slaby);
+  }
+
+  .pr-cislo--nabizi strong {
+    color: var(--uzavirky-plna);
+  }
+
+  .pr-cislo--hleda strong {
+    color: var(--nejiste);
+  }
+
   .mesice-nav-pocet {
     font-family: var(--mono);
     font-size: 10.5px;
@@ -2037,6 +2146,11 @@ button.pr-tlacitko {
   .pr-ja {
     margin-left: var(--mezera-2);
     margin-right: var(--mezera-2);
+  }
+
+  .pr-panel {
+    margin-left: var(--mezera-3);
+    margin-right: var(--mezera-3);
   }
 
   .pr-radek-poli {

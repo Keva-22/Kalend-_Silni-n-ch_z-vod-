@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import type { Zavod } from "../types";
 import { ZAVODY } from "../data/zavody";
-import { klicMesice, porovnejZavody } from "../ui";
+import { dniDo, klicMesice, porovnejZavody } from "../ui";
 import { TEXTY, lokalizujZavod } from "../i18n";
 import {
   ChybaPrihlasky,
@@ -77,6 +77,22 @@ const CHYBY: Record<KodChyby, string> = {
 
 type Stav = "vypnuto" | "nacitam" | "hotovo" | "chyba";
 
+type Filtr = "vse" | "s" | "moje";
+
+const FILTRY: [Filtr, string][] = [
+  ["vse", "Alle Rennen"],
+  ["s", "Mit Anmeldungen"],
+  ["moje", "Meine Anmeldungen"],
+];
+
+/** „3 dabei · 1 vielleicht" nebo „noch niemand". */
+function shrnuti(prihlasky: Prihlaska[]): string {
+  if (prihlasky.length === 0) return "noch niemand";
+  const jede = prihlasky.filter((p) => p.ucast === "jede").length;
+  const mozna = prihlasky.length - jede;
+  return [jede && `${jede} dabei`, mozna && `${mozna} vielleicht`].filter(Boolean).join(" · ");
+}
+
 export function Prihlasky({
   cilovyZavod,
   klicZOdkazu,
@@ -93,6 +109,7 @@ export function Prihlasky({
   const [chyba, setChyba] = useState("");
   const [pokus, setPokus] = useState(0);
   const [otevreny, setOtevreny] = useState<string | null>(cilovyZavod);
+  const [filtr, setFiltr] = useState<Filtr>("vse");
 
   // klíč z osobního odkazu si zapamatovat a z adresního řádku uklidit
   useEffect(() => {
@@ -107,6 +124,8 @@ export function Prihlasky({
 
   useEffect(() => {
     setOtevreny(cilovyZavod);
+    // cílový závod musí být vidět, i když má zatím nulu přihlášek
+    if (cilovyZavod) setFiltr("vse");
   }, [cilovyZavod]);
 
   const { zavody, znameId } = useMemo(() => {
@@ -189,8 +208,47 @@ export function Prihlasky({
     return [...skupiny.entries()];
   }, [zavody]);
 
+  /* Souhrny pro hlavičku a boční panel — jen přihlášky k nadcházejícím
+     závodům, které jsou na stránce vidět. */
+  const budouciId = useMemo(() => new Set(zavody.map((z) => z.id)), [zavody]);
+  const zobrazene = verejne.filter((p) => budouciId.has(p.zavodId));
+  const prehled = {
+    jede: zobrazene.filter((p) => p.ucast === "jede").length,
+    mozna: zobrazene.filter((p) => p.ucast === "mozna").length,
+    nabizi: zobrazene.filter((p) => p.odvoz === "nabizi").length,
+    hleda: zobrazene.filter((p) => p.odvoz === "hleda").length,
+  };
+  const maPrihlasky = (id: string) => (podleZavodu.get(id)?.length ?? 0) > 0 || moje.has(id);
+  // vlastní přihláška ještě neschválené osoby ve veřejném seznamu chybí
+  const pocetPrihlasek = (id: string) =>
+    (podleZavodu.get(id)?.length ?? 0) + (moje.has(id) && ja?.stav !== "schvaleno" ? 1 : 0);
+  const pocty: Record<Filtr, number> = {
+    vse: zavody.length,
+    s: zavody.filter((z) => maPrihlasky(z.id)).length,
+    moje: zavody.filter((z) => moje.has(z.id)).length,
+  };
+  const vybrane = mesice
+    .map(([k, zz]) => {
+      const vyber = zz.filter(
+        (z) => filtr === "vse" || (filtr === "s" ? maPrihlasky(z.id) : moje.has(z.id)),
+      );
+      return [k, vyber] as const;
+    })
+    .filter(([, zz]) => zz.length > 0);
+
+  const dalsi = zavody.find((z) => z.datum !== null);
+  const dalsiDatum = dalsi?.datum ? new Date(dalsi.datum + "T12:00:00") : null;
+  const dniDalsi = dalsi?.datum ? dniDo(dalsi.datum, dnesniDatum()) : 0;
+
+  function skocNaMesic(k: string) {
+    const klidne = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .getElementById(`mitfahren-mesic-${k}`)
+      ?.scrollIntoView({ behavior: klidne ? "auto" : "smooth", block: "start" });
+  }
+
   return (
-    <div className="obal obal--uzke" lang="de">
+    <div className="obal" lang="de">
       <header className="hlavicka">
         <a className="zpet" href="#">
           ← Zum Kalender
@@ -206,89 +264,204 @@ export function Prihlasky({
           Mitfahrgelegenheit hast oder suchst. Deine Anmeldung kannst du jederzeit
           ändern.
         </p>
+        <div className="hlavicka-pata">
+          <span className="cip">
+            <strong>{zavody.length} Rennen</strong> zur Auswahl
+          </span>
+          {stav === "hotovo" && (
+            <span className="cip">
+              <strong>{prehled.jede} dabei</strong> · {prehled.mozna} vielleicht
+            </span>
+          )}
+        </div>
+        {/* na širších displejích karta nejbližšího závodu vpravo */}
+        {dalsi && dalsiDatum && (
+          <a className="hero-karta" href={`#mitfahren/${dalsi.id}`}>
+            <span className="hero-karta-popisek">{DE.nejblizsiZavod}</span>
+            <span className="hero-karta-odpocet">
+              {DE.zaDni(dniDalsi)}
+            </span>
+            <span className="hero-karta-nazev">{dalsi.nazev}</span>
+            <span className="hero-karta-info">
+              <Vlajka zeme={dalsi.zeme} />
+              {DE.dnyZkratky[dalsiDatum.getDay()]} {dalsiDatum.getDate()}.{" "}
+              {dalsiDatum.getMonth() + 1}. {dalsiDatum.getFullYear()} · {dalsi.misto}
+            </span>
+            <span className="hero-karta-cisla">
+              <span>{stav === "hotovo" ? shrnuti(podleZavodu.get(dalsi.id) ?? []) : "…"}</span>
+              <span className="hero-karta-akce">
+                {moje.has(dalsi.id) ? "Ändern →" : "Ich fahre mit →"}
+              </span>
+            </span>
+          </a>
+        )}
       </header>
 
-      {stav === "vypnuto" && (
-        <div className="prazdno">
-          <p>Die Anmeldung ist noch nicht freigeschaltet. Schau bald wieder vorbei.</p>
-        </div>
-      )}
+      <div className="rozlozeni">
+        <aside className="bocni">
+          {stav === "hotovo" && ja && klic && <MujPanel ja={ja} klic={klic} zapomen={zapomen} />}
 
-      {stav === "nacitam" && (
-        <div className="prazdno">
-          <p>Anmeldungen werden geladen …</p>
-        </div>
-      )}
-
-      {stav === "chyba" && (
-        <div className="prazdno">
-          <p>Die Anmeldungen konnten nicht geladen werden.</p>
-          <p className="pr-chyba">{chyba}</p>
-          <button className="prepinac aktivni" onClick={() => setPokus((n) => n + 1)}>
-            Erneut versuchen
-          </button>
-        </div>
-      )}
-
-      {stav === "hotovo" && ja && klic && <MujPanel ja={ja} klic={klic} zapomen={zapomen} />}
-
-      {stav === "hotovo" &&
-        mesice.map(([klicMes, zavodyMesice]) => (
-          <section key={klicMes}>
-            <div className="mesic-hlava">
-              {/* stránka sahá přes dvě sezóny, proto i s rokem */}
-              <h2>
-                {DE.mesice[Number(klicMes.slice(5)) - 1]} {klicMes.slice(0, 4)}
-              </h2>
-              <div className="cara" />
-              <span className="pocet">{DE.pocetZavodu(zavodyMesice.length)}</span>
+          {stav === "hotovo" && (
+            <div className="pr-panel">
+              <div className="panel-titulek">Anzeigen</div>
+              <div className="pr-filtry">
+                {FILTRY.filter(([hodnota]) => hodnota !== "moje" || pocty.moje > 0).map(
+                  ([hodnota, popis]) => (
+                    <button
+                      key={hodnota}
+                      className={"prepinac pr-filtr" + (filtr === hodnota ? " aktivni" : "")}
+                      aria-pressed={filtr === hodnota}
+                      onClick={() => setFiltr(hodnota)}
+                    >
+                      <span>{popis}</span>
+                      <span className="pr-filtr-pocet">{pocty[hodnota]}</span>
+                    </button>
+                  ),
+                )}
+              </div>
             </div>
-            <div className="seznam">
-              {zavodyMesice.map((z) => (
-                <ZavodSPrihlaskami
-                  key={z.id}
-                  zavod={z}
-                  prihlasky={podleZavodu.get(z.id) ?? []}
-                  moje={moje.get(z.id)}
-                  ja={ja}
-                  klic={klic}
-                  cil={z.id === cilovyZavod}
-                  otevreno={otevreny === z.id}
-                  prepni={() => setOtevreny(otevreny === z.id ? null : z.id)}
-                  poUlozeni={poUlozeni}
-                  poSmazani={() => {
-                    setOtevreny(null);
-                    setPokus((n) => n + 1);
-                  }}
-                />
+          )}
+
+          {stav === "hotovo" && (
+            <div className="pr-panel pr-prehled">
+              <div className="panel-titulek">Übersicht</div>
+              <div className="pr-prehled-mrizka">
+                <div className="pr-cislo">
+                  <strong>{prehled.jede}</strong>
+                  <span>dabei</span>
+                </div>
+                <div className="pr-cislo">
+                  <strong>{prehled.mozna}</strong>
+                  <span>vielleicht</span>
+                </div>
+                <div className="pr-cislo pr-cislo--nabizi">
+                  <strong>{prehled.nabizi}</strong>
+                  <span>bieten Mitfahrt</span>
+                </div>
+                <div className="pr-cislo pr-cislo--hleda">
+                  <strong>{prehled.hleda}</strong>
+                  <span>suchen Mitfahrt</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {stav === "hotovo" && vybrane.length > 0 && (
+            <nav className="mesice-nav" aria-label={DE.mesiceNadpis}>
+              <span className="panel-titulek">{DE.mesiceNadpis}</span>
+              {vybrane.map(([k, zz]) => (
+                <button key={k} className="mesice-nav-polozka" onClick={() => skocNaMesic(k)}>
+                  <span className="mesice-nav-nazev">
+                    {DE.mesice[Number(k.slice(5)) - 1].slice(0, 3)} {k.slice(0, 4)}
+                  </span>
+                  {/* plná tečka = závod, na který už se někdo přihlásil */}
+                  <span className="mesice-nav-tecky" aria-hidden="true">
+                    {zz.map((z) => (
+                      <span
+                        key={z.id}
+                        className={
+                          maPrihlasky(z.id) ? "mesice-nav-tecka--plna" : "mesice-nav-tecka--tbc"
+                        }
+                      />
+                    ))}
+                  </span>
+                  <span className="mesice-nav-pocet" title="Anmeldungen">
+                    {zz.reduce((n, z) => n + pocetPrihlasek(z.id), 0)}
+                  </span>
+                </button>
               ))}
-            </div>
-          </section>
-        ))}
+            </nav>
+          )}
+        </aside>
 
-      {stav === "hotovo" && neprirazene.length > 0 && (
-        <section>
-          <div className="mesic-hlava">
-            <h2>Weitere Anmeldungen</h2>
-            <div className="cara" />
-          </div>
-          <div className="seznam">
-            <div className="pr-zavod">
-              <ul className="pr-seznam">
-                {neprirazene.map((p, i) => (
-                  <Ucastnik key={i} p={p} sZavodem />
-                ))}
-              </ul>
+        <main className="hlavni">
+          {stav === "vypnuto" && (
+            <div className="prazdno">
+              <p>Die Anmeldung ist noch nicht freigeschaltet. Schau bald wieder vorbei.</p>
             </div>
-          </div>
-        </section>
-      )}
+          )}
 
-      <p className="poznamka">
-        Mit der Anmeldung erscheinen dein Name und deine Angaben öffentlich auf
-        dieser Seite, sobald du einmal freigegeben wurdest. Gib deshalb nur an,
-        was alle sehen dürfen — Vorname und Initial reichen.
-      </p>
+          {stav === "nacitam" && (
+            <div className="prazdno">
+              <p>Anmeldungen werden geladen …</p>
+            </div>
+          )}
+
+          {stav === "chyba" && (
+            <div className="prazdno">
+              <p>Die Anmeldungen konnten nicht geladen werden.</p>
+              <p className="pr-chyba">{chyba}</p>
+              <button className="prepinac aktivni" onClick={() => setPokus((n) => n + 1)}>
+                Erneut versuchen
+              </button>
+            </div>
+          )}
+
+          {stav === "hotovo" && vybrane.length === 0 && (
+            <div className="prazdno">
+              <p>In dieser Auswahl gibt es noch keine Anmeldungen.</p>
+            </div>
+          )}
+
+          {stav === "hotovo" &&
+            vybrane.map(([klicMes, zavodyMesice]) => (
+              <section key={klicMes} id={`mitfahren-mesic-${klicMes}`}>
+                <div className="mesic-hlava">
+                  {/* stránka sahá přes dvě sezóny, proto i s rokem */}
+                  <h2>
+                    {DE.mesice[Number(klicMes.slice(5)) - 1]} {klicMes.slice(0, 4)}
+                  </h2>
+                  <div className="cara" />
+                  <span className="pocet">{DE.pocetZavodu(zavodyMesice.length)}</span>
+                </div>
+                <div className="seznam">
+                  {zavodyMesice.map((z) => (
+                    <ZavodSPrihlaskami
+                      key={z.id}
+                      zavod={z}
+                      prihlasky={podleZavodu.get(z.id) ?? []}
+                      moje={moje.get(z.id)}
+                      ja={ja}
+                      klic={klic}
+                      cil={z.id === cilovyZavod}
+                      otevreno={otevreny === z.id}
+                      prepni={() => setOtevreny(otevreny === z.id ? null : z.id)}
+                      poUlozeni={poUlozeni}
+                      poSmazani={() => {
+                        setOtevreny(null);
+                        setPokus((n) => n + 1);
+                      }}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+
+          {stav === "hotovo" && neprirazene.length > 0 && (
+            <section>
+              <div className="mesic-hlava">
+                <h2>Weitere Anmeldungen</h2>
+                <div className="cara" />
+              </div>
+              <div className="seznam">
+                <div className="pr-zavod">
+                  <ul className="pr-seznam">
+                    {neprirazene.map((p, i) => (
+                      <Ucastnik key={i} p={p} sZavodem />
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
+          )}
+
+          <p className="poznamka">
+            Mit der Anmeldung erscheinen dein Name und deine Angaben öffentlich auf
+            dieser Seite, sobald du einmal freigegeben wurdest. Gib deshalb nur an,
+            was alle sehen dürfen — Vorname und Initial reichen.
+          </p>
+        </main>
+      </div>
     </div>
   );
 }
@@ -357,12 +530,7 @@ function ZavodSPrihlaskami({
   const datum = zavod.datum ? new Date(zavod.datum + "T12:00:00") : null;
   const jede = prihlasky.filter((p) => p.ucast === "jede");
   const mozna = prihlasky.filter((p) => p.ucast === "mozna");
-  const pocet =
-    prihlasky.length === 0
-      ? "noch niemand"
-      : [jede.length && `${jede.length} dabei`, mozna.length && `${mozna.length} vielleicht`]
-          .filter(Boolean)
-          .join(" · ");
+  const pocet = shrnuti(prihlasky);
   // vlastní přihlášku bez schválení vidí jen autor
   const mojeSkryta = moje && ja && ja.stav !== "schvaleno";
 

@@ -48,6 +48,12 @@ export function profilZavodu(zavod: Zavod): ProfilZavodu | null {
   };
 }
 
+/** Počet dní z data `dnes` do data `datum` (obě 'YYYY-MM-DD'). */
+export function dniDo(datum: string, dnes: string): number {
+  const poledne = (d: string) => new Date(d + "T12:00:00").getTime();
+  return Math.round((poledne(datum) - poledne(dnes)) / (24 * 60 * 60 * 1000));
+}
+
 /** 'YYYY-MM' — z termínu, nebo z odhadovaného měsíce u závodů bez termínu. */
 export function klicMesice(zavod: Zavod): string {
   return zavod.datum ? zavod.datum.slice(0, 7) : (zavod.odhadMesic ?? "");

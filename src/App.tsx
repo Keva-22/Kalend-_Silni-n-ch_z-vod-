@@ -3,6 +3,7 @@ import type { Zavod, Zeme } from "./types";
 import { ZAVODY } from "./data/zavody";
 import {
   PROFILY,
+  dniDo,
   klicMesice,
   porovnejZavody,
   profilZavodu,
@@ -26,7 +27,6 @@ import { Vlajka } from "./components/Vlajka";
 const SEZONY = ["2026", "2027"];
 const JAZYKY: Jazyk[] = ["cs", "de"];
 const POCET_ZEMI = new Set(ZAVODY.map((z) => z.zeme)).size;
-const DEN_MS = 24 * 60 * 60 * 1000;
 
 /* Nejbližší závod s pevným termínem od dneška a počet dní do něj. */
 function nejblizsiZavod(): { zavod: Zavod; dni: number } | null {
@@ -35,11 +35,7 @@ function nejblizsiZavod(): { zavod: Zavod; dni: number } | null {
     porovnejZavody,
   )[0];
   if (!dalsi?.datum) return null;
-  const dni = Math.round(
-    (new Date(dalsi.datum + "T12:00:00").getTime() - new Date(dnes + "T12:00:00").getTime()) /
-      DEN_MS,
-  );
-  return { zavod: dalsi, dni };
+  return { zavod: dalsi, dni: dniDo(dalsi.datum, dnes) };
 }
 
 /* Sdílení závodu přes hash: #zavod/<id>. Bez routovací knihovny. */
