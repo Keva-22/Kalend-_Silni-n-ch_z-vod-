@@ -19,6 +19,8 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
   const p = profilZavodu(zavod);
   const datum = zavod.datum ? new Date(zavod.datum + "T12:00:00") : null;
   const probehlo = !jeBudouci(zavod, dnesniDatum());
+  // bez převýšení aspoň délka nejdelší trasy (profil se pak nepočítá)
+  const nejdelsiKm = Math.max(0, ...zavod.trasy.map((tr) => tr.km ?? 0));
   const nejiste = zavod.datum !== null && zavod.overeno === "check" && !probehlo;
 
   return (
@@ -95,6 +97,13 @@ export function Radek({ zavod, otevreno, prepni }: Props) {
                   ▲{" "}
                 </span>
                 {p.trasa.hm} {t.jednotkaHm}
+              </div>
+            </>
+          ) : nejdelsiKm > 0 ? (
+            <>
+              <div className="radek-km">{nejdelsiKm} km</div>
+              <div className="radek-hm radek-hm--chybi" title={t.nedoplneno}>
+                – {t.jednotkaHm}
               </div>
             </>
           ) : (

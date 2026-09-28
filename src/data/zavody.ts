@@ -250,6 +250,42 @@ export const ZAVODY: Zavod[] = [
     },
   },
   {
+    id: "letape-kopcovita-2027", nazev: "L'Etape Czech Republic — Kopcovitá etapa",
+    misto: "Praha a okolí", region: "Praha", zeme: "CZ",
+    // termín, trasy a ceny z přihlašovací stránky pořadatele (od uživatele, 28. 9. 2026)
+    datum: "2027-06-19", overeno: "ok",
+    serie: "L'Etape by Tour de France",
+    // Převýšení tras 2027 zatím nezveřejněno. Trasy jsou jiné než v roce 2026
+    // (58 km / 450 hm, 105 km / 1200 hm, 135 km / 1700 hm), proto hm = null.
+    trasy: [
+      { nazev: "Krátká", km: 60, hm: null },
+      { nazev: "Střední", km: 100, hm: null },
+      { nazev: "Dlouhá", km: 130, hm: null },
+    ],
+    uzavirky: "plna",
+    // ceny k 28. 9. 2026; kapacita krátké trasy 600, dlouhé 800, střední vyprodaná
+    startovne: "2 990 Kč (60 km) · 3 890 Kč (100 km, vyprodáno) · 4 190 Kč (130 km)",
+    web: "https://www.letapeczech.cz",
+    zdroj: "letapeczech.cz (registrace, 28. 9. 2026)",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 130,  // [uncertain] nejdelší ze 3 tras; převýšení zatím neznámé
+    startLocation: { city: "Praha", country: "CZ" },
+    entryFee: "2 990 Kč (60 km) · 3 890 Kč (100 km, vyprodáno) · 4 190 Kč (130 km)",
+    series: "L'Etape by Tour de France",
+    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
+    lastVerified: "2026-09-28",
+    sourceUrl: "https://www.letapeczech.cz",
+    de: {
+      nazev: "L'Etape Czech Republic — Hügelige Etappe",
+      misto: "Prag und Umgebung",
+      region: "Prag",
+      startovne: "2 990 Kč (60 km) · 3 890 Kč (100 km, ausgebucht) · 4 190 Kč (130 km)",
+      zdroj: "letapeczech.cz (Anmeldung, 28. 9. 2026)",
+      trasy: ["Kurz", "Mittel", "Lang"],
+    },
+  },
+  {
     id: "mondsee-2027", nazev: "Mondsee 5 Seen Radmarathon",
     misto: "Mondsee", region: "Oberösterreich", zeme: "AT",
     // 39. ročník; web opraven — dřívější 5seen-radmarathon.at nemá žádný obsah
@@ -511,35 +547,6 @@ export const ZAVODY: Zavod[] = [
   },
 
   // ─── 2027, termín zatím nevyhlášen ─────────────────────────────
-  {
-    id: "letape-kopcovita-2027", nazev: "L'Etape Czech Republic — Kopcovitá etapa",
-    misto: "Praha a okolí", region: "Praha", zeme: "CZ",
-    datum: null, odhadMesic: "2027-06", overeno: "tbc",
-    serie: "L'Etape by Tour de France",
-    trasy: [
-      { nazev: "Krátká", km: 58, hm: 450 },
-      { nazev: "Střední", km: 105, hm: 1200 },
-      { nazev: "Dlouhá", km: 135, hm: 1700 },
-    ],
-    uzavirky: "plna", startovne: null,
-    web: "https://www.letapeczech.cz",
-    zdroj: "ročník 2026 pro orientaci",
-
-    /* ── rozšířená pole ── */
-    distanceKm: 135,  // [uncertain] nejdelší ze 3 změřených tras
-    elevationM: 1700,  // [uncertain] nejdelší ze 3 změřených tras
-    profile: "hilly",  // [uncertain] odvozeno z hm/km = 12.6
-    startLocation: { city: "Praha a okolí", country: "CZ" },
-    series: "L'Etape by Tour de France",
-    status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
-    de: {
-      nazev: "L'Etape Czech Republic — Hügelige Etappe",
-      misto: "Prag und Umgebung",
-      region: "Prag",
-      zdroj: "Ausgabe 2026 zur Orientierung",
-      trasy: ["Kurz", "Mittel", "Lang"],
-    },
-  },
   {
     id: "letape-rovinata-2027", nazev: "L'Etape Czech Republic — Rovinatá etapa",
     misto: "Pardubicko", region: "Pardubický kraj", zeme: "CZ",
