@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Zavod, Zeme } from "./types";
 import { ZAVODY } from "./data/zavody";
 import { PROFILY, klicMesice, porovnejZavody } from "./ui";
-import { PRIHLASKY_ZAPNUTE } from "./prihlasky";
+import { PRIHLASKY_ZAPNUTE, dnesniDatum } from "./prihlasky";
 import {
   NAZVY_JAZYKU,
   TEXTY,
@@ -15,9 +15,26 @@ import {
 import { Radek } from "./components/Radek";
 import { Mrizka } from "./components/Mrizka";
 import { Prihlasky } from "./components/Prihlasky";
+import { Vlajka } from "./components/Vlajka";
 
 const SEZONY = ["2026", "2027"];
 const JAZYKY: Jazyk[] = ["cs", "de"];
+const POCET_ZEMI = new Set(ZAVODY.map((z) => z.zeme)).size;
+const DEN_MS = 24 * 60 * 60 * 1000;
+
+/* Nejbližší závod s pevným termínem od dneška a počet dní do něj. */
+function nejblizsiZavod(): { zavod: Zavod; dni: number } | null {
+  const dnes = dnesniDatum();
+  const dalsi = ZAVODY.filter((z) => z.datum !== null && z.datum >= dnes).sort(
+    porovnejZavody,
+  )[0];
+  if (!dalsi?.datum) return null;
+  const dni = Math.round(
+    (new Date(dalsi.datum + "T12:00:00").getTime() - new Date(dnes + "T12:00:00").getTime()) /
+      DEN_MS,
+  );
+  return { zavod: dalsi, dni };
+}
 
 /* Sdílení závodu přes hash: #zavod/<id>. Bez routovací knihovny. */
 function zavodZHash(): Zavod | null {
@@ -54,6 +71,7 @@ export default function App() {
   const [otevreny, setOtevreny] = useState<string | null>(ZAVOD_Z_URL?.id ?? null);
 
   const t = TEXTY[jazyk];
+  const nejblizsi = useMemo(nejblizsiZavod, []);
 
   useEffect(() => {
     if (ZAVOD_Z_URL) {
@@ -162,6 +180,18 @@ export default function App() {
             <span className="tlumene">{t.nadpis2}</span>
           </h1>
           <p>{t.popis}</p>
+          <div className="hlavicka-pata">
+            <span className="cip">
+              <strong>{t.pocetZavodu(ZAVODY.length)}</strong> · {t.pocetZemi(POCET_ZEMI)}
+            </span>
+            {nejblizsi && (
+              <a className="cip cip--odkaz" href={`#zavod/${nejblizsi.zavod.id}`}>
+                {t.nejblizsi}:{" "}
+                <strong>{lokalizujZavod(nejblizsi.zavod, jazyk).nazev}</strong> ·{" "}
+                {t.zaDni(nejblizsi.dni)}
+              </a>
+            )}
+          </div>
           {PRIHLASKY_ZAPNUTE && (
             <a className="odkaz-prihlasky" href="#mitfahren">
               {t.odkazPrihlasky}
@@ -170,47 +200,84 @@ export default function App() {
         </header>
 
         <div className="ovladani">
-          {SEZONY.map((s) => (
-            <button
-              key={s}
-              className={"prepinac prepinac-sezona" + (sezona === s ? " aktivni" : "")}
-              onClick={() => {
-                setSezona(s);
-                prepniZavod(null);
-              }}
-            >
-              {s}
-            </button>
-          ))}
+          <div className="segment segment--sezona">
+            {SEZONY.map((s) => (
+              <button
+                key={s}
+                className={"prepinac prepinac-sezona" + (sezona === s ? " aktivni" : "")}
+                aria-pressed={sezona === s}
+                onClick={() => {
+                  setSezona(s);
+                  prepniZavod(null);
+                }}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
 
-          <div className="ovladani-oddelovac" />
-
-          {volbyZeme.map((volba) => (
-            <button
-              key={volba}
-              className={"prepinac" + (zeme === volba ? " aktivni" : "")}
-              onClick={() => setZeme(volba)}
-            >
-              {volba === "vse" ? t.vse : volba}
-            </button>
-          ))}
+          <div className="zeme-volby">
+            {volbyZeme.map((volba) => (
+              <button
+                key={volba}
+                className={"prepinac prepinac-zeme" + (zeme === volba ? " aktivni" : "")}
+                aria-pressed={zeme === volba}
+                onClick={() => setZeme(volba)}
+              >
+                {volba === "vse" ? (
+                  t.vse
+                ) : (
+                  <>
+                    <Vlajka zeme={volba} />
+                    {volba}
+                  </>
+                )}
+              </button>
+            ))}
+          </div>
 
           <div className="ovladani-mezera" />
 
-          {(
-            [
-              ["seznam", t.seznam],
-              ["kalendar", t.kalendar],
-            ] as const
-          ).map(([klic, popisek]) => (
-            <button
-              key={klic}
-              className={"prepinac" + (pohled === klic ? " aktivni" : "")}
-              onClick={() => setPohled(klic)}
-            >
-              {popisek}
-            </button>
+          <div className="segment">
+            {(
+              [
+                ["seznam", t.seznam],
+                ["kalendar", t.kalendar],
+              ] as const
+            ).map(([klic, popisek]) => (
+              <button
+                key={klic}
+                className={"prepinac" + (pohled === klic ? " aktivni" : "")}
+                aria-pressed={pohled === klic}
+                onClick={() => setPohled(klic)}
+              >
+                {popisek}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="legenda">
+          <span className="legenda-titulek">{t.legenda}</span>
+          {PROFILY.map((p, i) => (
+            <span key={p.klic} className="legenda-polozka">
+              <span className={`legenda-vzorek pruh--${p.klic}`} />
+              <span className={`profil--${p.klic}`}>{t.profily[p.klic]}</span>
+              <span className="legenda-rozsah">
+                {i === 0
+                  ? "<8"
+                  : p.max === Infinity
+                    ? ">22"
+                    : `${PROFILY[i - 1].max}–${p.max}`}
+              </span>
+            </span>
           ))}
+          <span className="legenda-polozka">
+            <span className="radek-otaznik radek-otaznik--legenda" aria-hidden="true">
+              ?
+            </span>
+            {t.terminKOvereni}
+          </span>
         </div>
 
         {mesice.length === 0 ? (
@@ -253,25 +320,6 @@ export default function App() {
             );
           })
         )}
-
-        <div className="legenda">
-          <div className="legenda-titulek">{t.legenda}</div>
-          <div className="legenda-polozky">
-            {PROFILY.map((p, i) => (
-              <div key={p.klic} className="legenda-polozka">
-                <div className={`legenda-vzorek pruh--${p.klic}`} />
-                <span>
-                  {t.profily[p.klic]}{" "}
-                  {i === 0
-                    ? "<8"
-                    : p.max === Infinity
-                      ? ">22"
-                      : `${PROFILY[i - 1].max}–${p.max}`}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <p className="poznamka">{t.poznamka}</p>
       </div>

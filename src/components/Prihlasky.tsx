@@ -24,6 +24,7 @@ import {
   type Ucast,
   type Udaje,
 } from "../prihlasky";
+import { Vlajka } from "./Vlajka";
 
 /* Stránka „Wer fährt mit?" — jen německy. U každého nadcházejícího závodu
    ukazuje přihlášky schválených osob a formulář pro novou přihlášku nebo
@@ -381,12 +382,13 @@ function ZavodSPrihlaskami({
         <div className="radek-stred">
           <div className="radek-titulek">
             <span className="radek-nazev">{zavod.nazev}</span>
-            <span className="odznak">{zavod.zeme}</span>
             {zavod.format === "time-trial" && (
               <span className="odznak odznak--casovka">{DE.casovka}</span>
             )}
           </div>
           <div className="radek-misto">
+            <Vlajka zeme={zavod.zeme} />
+            <span className="zeme-kod">{zavod.zeme}</span>
             {zavod.misto} · {zavod.region}
           </div>
         </div>

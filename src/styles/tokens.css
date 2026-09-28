@@ -1,26 +1,35 @@
 /* Designové tokeny — světlé téma.
-   Barvy profilů jsou zvolené tak, aby byly čitelné jako text na bílé
-   (kontrast ≥ 4.5:1) a zároveň fungovaly jako barevný pruh. */
+   Rozhraní (tlačítka, odkazy, výběr) je modré, aby se nepletlo s barvami
+   profilů trati (zelená → červená), které nesou informaci o terénu.
+   Barvy textu mají na bílé kontrast ≥ 4.5:1. */
 
 :root {
   /* ── Plochy ────────────────────────────────────────────── */
-  --pozadi: #f5f3ef;          /* pozadí stránky, teplá off-white */
+  --pozadi: #eef2f7;          /* pozadí stránky, chladná světlá šedomodrá */
   --plocha: #ffffff;          /* karty, seznam, buňky kalendáře */
-  --plocha-tlum: #f7f9f8;     /* jemné zvýraznění (hover, detail) */
-  --plocha-akcent: #edf6f2;   /* akcentové zvýraznění (otevřený řádek) */
+  --plocha-tlum: #f6f8fb;     /* jemné zvýraznění (hover, detail) */
+  --plocha-akcent: #eaf0fd;   /* akcentové zvýraznění (otevřený řádek) */
 
-  --linka: #e5e3dd;           /* hairline linky a rámečky */
-  --linka-vyrazna: #d3d0c8;   /* výraznější oddělení */
+  --linka: #e2e7ef;           /* hairline linky a rámečky */
+  --linka-vyrazna: #cbd4e1;   /* výraznější oddělení */
 
   /* ── Text ──────────────────────────────────────────────── */
-  --text: #12212b;            /* hlavní text */
-  --text-tlum: #4d6673;       /* sekundární text */
-  --text-slaby: #5e7784;      /* popisky, mono štítky */
+  --text: #0f1b2d;            /* hlavní text */
+  --text-tlum: #46566d;       /* sekundární text */
+  --text-slaby: #5a6b82;      /* popisky, mono štítky */
 
-  /* ── Akcent ────────────────────────────────────────────── */
-  --akcent: #0d7a5e;
-  --akcent-tmavy: #0a5f49;
-  --akcent-plocha: #e4f1ec;
+  /* ── Akcent (rozhraní) ─────────────────────────────────── */
+  --akcent: #2350c9;
+  --akcent-tmavy: #1a3d9c;
+  --akcent-plocha: #e5ecfc;
+
+  /* ── Hlavička ──────────────────────────────────────────── */
+  --hero-od: #0c1f3d;
+  --hero-do: #1d4f95;
+  --hero-text: #ffffff;
+  --hero-tlum: #bcd0ec;
+  --zluta: #ffd23f;           /* značka a výzva k akci na tmavé hlavičce */
+  --zluta-tmava: #f5c211;
 
   /* ── Profily trati (převýšení na kilometr) ─────────────── */
   --profil-rovina: #0f7d55;
@@ -32,11 +41,17 @@
   --uzavirky-plna: #0f7d55;
   --uzavirky-castecna: #9a6a06;
   --uzavirky-provoz: #bd5418;
-  --uzavirky-nezname: #5e7784;
+  --uzavirky-nezname: #5a6b82;
+
+  /* ── Štítky ────────────────────────────────────────────── */
+  --casovka: #6536c9;
+  --casovka-plocha: #efe9fc;
+  --nejiste: #b25e00;         /* termín k ověření */
+  --nejiste-plocha: #fff1dc;
 
   /* ── Stíny ─────────────────────────────────────────────── */
-  --stin: 0 1px 2px rgba(18, 33, 43, 0.05), 0 1px 3px rgba(18, 33, 43, 0.04);
-  --stin-vyrazny: 0 4px 16px rgba(18, 33, 43, 0.08);
+  --stin: 0 1px 2px rgba(15, 27, 45, 0.05), 0 2px 6px rgba(15, 27, 45, 0.05);
+  --stin-vyrazny: 0 6px 24px rgba(15, 27, 45, 0.1);
 
   /* ── Typografie ────────────────────────────────────────── */
   --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
@@ -52,7 +67,7 @@
   --mezera-6: 34px;
 
   /* ── Zaoblení ──────────────────────────────────────────── */
-  --radius: 12px;
-  --radius-male: 6px;
+  --radius: 14px;
+  --radius-male: 7px;
   --radius-pilulka: 999px;
 }

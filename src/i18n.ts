@@ -46,6 +46,11 @@ export interface Texty {
   zdroj: string;
   odkazPrihlasky: string;
   kdoJede: string;
+  pocetZemi: (pocet: number) => string;
+  nejblizsi: string;
+  zaDni: (dni: number) => string;
+  probehlo: string;
+  terminKOvereni: string;
 }
 
 const CS: Texty = {
@@ -106,6 +111,12 @@ const CS: Texty = {
   zdroj: "zdroj:",
   odkazPrihlasky: "Kdo jede na který závod? Přihlášky (v němčině) →",
   kdoJede: "Přihlásit se · kdo jede →",
+  pocetZemi: (n) => `${n} ${n === 1 ? "země" : n >= 2 && n <= 4 ? "země" : "zemí"}`,
+  nejblizsi: "Nejbližší",
+  zaDni: (n) =>
+    n === 0 ? "dnes" : n === 1 ? "zítra" : `za ${n} ${n >= 2 && n <= 4 ? "dny" : "dní"}`,
+  probehlo: "proběhlo",
+  terminKOvereni: "termín k ověření",
 };
 
 const DE: Texty = {
@@ -168,6 +179,11 @@ const DE: Texty = {
   zdroj: "Quelle:",
   odkazPrihlasky: "Wer fährt mit? Zu den Anmeldungen →",
   kdoJede: "Anmelden · wer fährt mit →",
+  pocetZemi: (n) => `${n} ${n === 1 ? "Land" : "Länder"}`,
+  nejblizsi: "Nächstes",
+  zaDni: (n) => (n === 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`),
+  probehlo: "vorbei",
+  terminKOvereni: "Termin unbestätigt",
 };
 
 export const TEXTY: Record<Jazyk, Texty> = { cs: CS, de: DE };
