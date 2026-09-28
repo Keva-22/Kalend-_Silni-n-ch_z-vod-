@@ -392,7 +392,8 @@ export const ZAVODY: Zavod[] = [
   {
     id: "kufstein-2027", nazev: "Kufsteinerland Radmarathon",
     misto: "Kufstein", region: "Tirol", zeme: "AT",
-    datum: "2027-08-22", overeno: "ok",
+    // 22. 8. 2027 zatím jen jako pravděpodobný termín (uživatel, 28. 9. 2026)
+    datum: "2027-08-22", overeno: "check",
     serie: "Tiroler Rennrad Cup",
     // km/hm dle 10. ročníku (23. 8. 2026); zdroj: kufsteinerland-radmarathon.at
     trasy: [
@@ -402,7 +403,7 @@ export const ZAVODY: Zavod[] = [
     ],
     uzavirky: "nezname", startovne: null,
     web: "https://www.kufsteinerland-radmarathon.at",
-    zdroj: "kufsteinerland-radmarathon.at (termín, vyhledávání 28. 9. 2026); trasy dle ročníku 2026",
+    zdroj: "kufsteinerland-radmarathon.at (pravděpodobný termín, 28. 9. 2026); trasy dle ročníku 2026",
 
     /* ── rozšířená pole ── */
     distanceKm: 120,   // [uncertain] nejdelší ze 3 tras, ročník 2026
@@ -410,8 +411,8 @@ export const ZAVODY: Zavod[] = [
     profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.0
     startLocation: { city: "Kufstein", country: "AT" },
     series: "Tiroler Rennrad Cup",
-    status: "confirmed",  // [uncertain] odvozeno z overeno="ok"
-    de: { zdroj: "kufsteinerland-radmarathon.at (Termin, Websuche 28. 9. 2026); Strecken laut Ausgabe 2026" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    de: { zdroj: "kufsteinerland-radmarathon.at (voraussichtlicher Termin, 28. 9. 2026); Strecken laut Ausgabe 2026" },
   },
   {
     id: "oetztaler-2027", nazev: "Ötztaler Radmarathon",
@@ -429,6 +430,33 @@ export const ZAVODY: Zavod[] = [
     startLocation: { city: "Sölden", country: "AT" },
     status: "provisional",  // [uncertain] odvozeno z overeno="check"
     de: { zdroj: "Termin: central-soelden.com + intervalcoach.app (Websuche 27. 9. 2026); Strecke laut Ausgabe 2026" },
+  },
+  {
+    id: "sauwald-2027", nazev: "SauwaldGiro",
+    misto: "Sauwald", region: "Oberösterreich", zeme: "AT",
+    // Termín odvozen z odpočtu na sauwaldgiro.at: 28. 9. 2026 kolem poledne
+    // ukazoval "334 Tage 20 Stunden" → neděle 29. 8. 2027 dopoledne
+    // (28. 8. by vyšlo jen s odpočtem z 27. 9.). Datum pořadatel výslovně
+    // nezveřejnil, proto "check". Ročník 2026 byl také v neděli (30. 8.).
+    datum: "2027-08-29", overeno: "check", serie: null,
+    // km/hm dle sauwaldgiro.at; zdroj značí trasy jako Route A / Route B
+    trasy: [
+      { nazev: "Runde A", km: 105, hm: 1600 },  // [uncertain]
+      { nazev: "Runde B", km: 61, hm: 900 },    // [uncertain]
+    ],
+    uzavirky: "nezname", startovne: null,
+    web: "https://www.sauwaldgiro.at",
+    zdroj: "sauwaldgiro.at (odpočet do startu, 28. 9. 2026); startovné zatím neuvedeno",
+
+    /* ── rozšířená pole ── */
+    distanceKm: 105,   // [uncertain] delší ze 2 tras
+    elevationM: 1600,  // [uncertain]
+    profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.2
+    // pořadatel uvádí jako místo startu St. Roman bei Schärding v Innviertelu
+    startLocation: { city: "St. Roman bei Schärding", country: "AT" },
+    status: "provisional",  // [uncertain] odvozeno z overeno="check"
+    sourceUrl: "https://www.sauwaldgiro.at",  // [uncertain] domovská stránka pořadatele
+    de: { zdroj: "sauwaldgiro.at (Countdown bis zum Start, 28. 9. 2026); Startgeld noch nicht angegeben" },
   },
   {
     id: "kitzbuehel-2027", nazev: "Kitzbüheler Radmarathon",
@@ -536,29 +564,6 @@ export const ZAVODY: Zavod[] = [
       zdroj: "Ausgabe 2026 zur Orientierung",
       trasy: ["Hauptstrecke"],
     },
-  },
-  {
-    id: "sauwald-2027", nazev: "SauwaldGiro",
-    misto: "Sauwald", region: "Oberösterreich", zeme: "AT",
-    datum: null, odhadMesic: "2027-08", overeno: "tbc", serie: null,
-    // km/hm dle sauwaldgiro.at; zdroj značí trasy jako Route A / Route B
-    trasy: [
-      { nazev: "Runde A", km: 105, hm: 1600 },  // [uncertain]
-      { nazev: "Runde B", km: 61, hm: 900 },    // [uncertain]
-    ],
-    uzavirky: "nezname", startovne: null,
-    web: "https://www.sauwaldgiro.at",
-    zdroj: "sauwaldgiro.at / radmarathon.at (vyhledávání 27. 9. 2026); termín 2027 zatím nevyhlášen",
-
-    /* ── rozšířená pole ── */
-    distanceKm: 105,   // [uncertain] delší ze 2 tras
-    elevationM: 1600,  // [uncertain]
-    profile: "hilly",  // [uncertain] odvozeno z hm/km = 15.2
-    // pořadatel uvádí jako místo startu St. Roman bei Schärding v Innviertelu
-    startLocation: { city: "St. Roman bei Schärding", country: "AT" },
-    status: "provisional",  // [uncertain] odvozeno z overeno="tbc"
-    sourceUrl: "https://www.sauwaldgiro.at",  // [uncertain] domovská stránka pořadatele
-    de: { zdroj: "sauwaldgiro.at / radmarathon.at (Websuche 27. 9. 2026); Termin 2027 noch nicht bekannt" },
   },
   {
     id: "carinthia200-2027", nazev: "Carinthia200",
